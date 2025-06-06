@@ -14,10 +14,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
       <div className="bg-white rounded-xl shadow p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Welcome back, {currentUser?.name || 'OUSL Student'} 🎓</h1>
-          <p className="text-gray-600 mt-1">Logged in as <strong>{currentUser?.email}</strong></p>
+          <h1 className="text-3xl font-bold text-gray-800">Welcome back, {currentUser?.name || 'OUSL Student'} 👋</h1>
+          <p className="text-gray-600 mt-1">You're logged in as <strong>{currentUser?.email}</strong></p>
         </div>
         <button
           onClick={handleLogout}
@@ -27,7 +28,8 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Section with red background */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-200 p-4 rounded-4xl">
         <DashboardCard 
           title="My Profile"
           description="Update your account and view your details"
@@ -66,6 +68,7 @@ export default function Dashboard() {
         />
       </section>
 
+      {/* Footer */}
       <footer className="mt-12 text-center text-gray-500 text-sm">
         © {new Date().getFullYear()} Open University of Sri Lanka. All rights reserved.
       </footer>
@@ -78,13 +81,13 @@ function DashboardCard({ title, description, to, icon }) {
   return (
     <div
       onClick={() => navigate(to)}
-      className="cursor-pointer bg-ousl-blue text-white p-6 rounded-xl shadow hover:bg-ousl-green transition transform hover:-translate-y-1 hover:scale-105 duration-300"
+      className="cursor-pointer bg-white text-gray-800 p-6 rounded-xl shadow hover:bg-gray-100 transition transform hover:-translate-y-1 hover:scale-105 duration-300"
     >
       <div className="flex items-center mb-3">
         {icon}
         <h2 className="text-lg font-semibold ml-2">{title}</h2>
       </div>
-      <p className="text-sm text-gray-100">{description}</p>
+      <p className="text-sm">{description}</p>
     </div>
   );
 }
