@@ -8,6 +8,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Register from './components/auth/Register';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route index element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} /> 
+        <Route path="/about" element={<AboutUs />} />
           
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>

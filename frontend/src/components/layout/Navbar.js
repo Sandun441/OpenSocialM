@@ -47,6 +47,12 @@ const Navbar = () => {
                 >
                   Profile
                 </Link>
+                <Link
+                  to="/about"
+                  className="border-transparent text-white hover:border-white hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  About US
+                </Link>
               </div>
             )}
           </div>
