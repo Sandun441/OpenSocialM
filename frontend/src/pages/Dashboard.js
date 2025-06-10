@@ -19,44 +19,46 @@ export default function Dashboard() {
       </div>
 
       {/* Section with red background */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-200 p-4 rounded-4xl">
-        <DashboardCard 
-          title="My Profile"
-          description="Update your account and view your details"
-          to="/profile"
-          icon={<User className="w-6 h-6" />}
-        />
-        <DashboardCard 
-          title="Faculty"
-          description="Explore your faculty's announcements and events"
-          to="/faculty/science"
-          icon={<GraduationCap className="w-6 h-6" />}
-        />
-        <DashboardCard 
-          title="Batch Community"
-          description="Chat with students from your batch"
-          to="/batch"
-          icon={<Users className="w-6 h-6" />}
-        />
-        <DashboardCard 
-          title="Events & Calendar"
-          description="View upcoming academic and university events"
-          to="/calendar"
-          icon={<CalendarDays className="w-6 h-6" />}
-        />
-        <DashboardCard 
-          title="Discussion Forum"
-          description="Ask questions and help others in the community"
-          to="/forum"
-          icon={<MessageSquare className="w-6 h-6" />}
-        />
-        <DashboardCard 
-          title="Academic Progress"
-          description="Track your course completion and grades"
-          to="/progress"
-          icon={<GraduationCap className="w-6 h-6" />}
-        />
-      </section>
+{/* Dashboard Grid Section */}
+<section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <DashboardCard 
+    title="My Profile"
+    description="Update your account and view your details"
+    to="/profile"
+    icon={<User className="w-6 h-6" />}
+  />
+  <DashboardCard 
+    title="Faculty"
+    description="Explore your faculty's announcements and events"
+    to="/faculty/science"
+    icon={<GraduationCap className="w-6 h-6" />}
+  />
+  <DashboardCard 
+    title="Batch Community"
+    description="Chat with students from your batch"
+    to="/batch"
+    icon={<Users className="w-6 h-6" />}
+  />
+  <DashboardCard 
+    title="Events & Calendar"
+    description="View upcoming academic and university events"
+    to="/calendar"
+    icon={<CalendarDays className="w-6 h-6" />}
+  />
+  <DashboardCard 
+    title="Discussion Forum"
+    description="Ask questions and help others in the community"
+    to="/forum"
+    icon={<MessageSquare className="w-6 h-6" />}
+  />
+  <DashboardCard 
+    title="Academic Progress"
+    description="Track your course completion and grades"
+    to="/progress"
+    icon={<GraduationCap className="w-6 h-6" />}
+  />
+</section>
+
 
       {/* Footer */}
 
