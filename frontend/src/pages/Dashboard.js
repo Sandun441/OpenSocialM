@@ -15,7 +15,19 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
- 
+      <div className="bg-white rounded-xl shadow p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Welcome back, {currentUser?.name || 'OUSL Student'} 👋</h1>
+          <p className="text-gray-600 mt-1">You're logged in as <strong>{currentUser?.email}</strong></p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow"
+        >
+          Log out
+        </button>
+      </div>
+
       {/* Section with red background */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-gray-200 p-4 rounded-4xl">
         <DashboardCard 
@@ -55,19 +67,8 @@ export default function Dashboard() {
           icon={<GraduationCap className="w-6 h-6" />}
         />
       </section>
-           <div className="bg-white rounded-xl shadow p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Welcome back, {currentUser?.name || 'OUSL Student'} 👋</h1>
-          <p className="text-gray-600 mt-1">You're logged in as <strong>{currentUser?.email}</strong></p>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow"
-        >
-          Log out
-        </button>
-      </div>
 
+      {/* Footer */}
 
     </div>
   );
