@@ -69,9 +69,6 @@ export default function Dashboard() {
       </section>
 
       {/* Footer */}
-      <footer className="mt-12 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} Open University of Sri Lanka. All rights reserved.
-      </footer>
     </div>
   );
 }
