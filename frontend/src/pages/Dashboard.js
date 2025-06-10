@@ -20,12 +20,6 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-gray-800">Welcome back, {currentUser?.name || 'OUSL Student'} 👋</h1>
           <p className="text-gray-600 mt-1">You're logged in as <strong>{currentUser?.email}</strong></p>
         </div>
-        <button
-          onClick={handleLogout}
-          className="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded shadow"
-        >
-          Log out
-        </button>
       </div>
 
       {/* Section with red background */}
