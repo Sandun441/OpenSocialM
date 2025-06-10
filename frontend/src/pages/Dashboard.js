@@ -4,13 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { CalendarDays, User, GraduationCap, Users, MessageSquare } from 'lucide-react';
 
 export default function Dashboard() {
-  const { currentUser, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { currentUser} = useContext(AuthContext);
+ 
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
