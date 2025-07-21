@@ -1,10 +1,16 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, User, GraduationCap, Users, MessageSquare } from 'lucide-react';
+import {
+  CalendarDays,
+  User,
+  GraduationCap,
+  Users,
+  MessageSquare,
+} from 'lucide-react';
 
 export default function Dashboard() {
-  const { currentUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -12,11 +18,8 @@ export default function Dashboard() {
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-800 mb-2">
-            Welcome back, {currentUser?.name || 'OUSL Student'} 👋
+            Welcome back, {user?.firstName} 👋
           </h1>
-          <p className="text-gray-600 text-lg">
-            You're logged in as <strong>{currentUser?.email}</strong>
-          </p>
         </div>
       </div>
 
