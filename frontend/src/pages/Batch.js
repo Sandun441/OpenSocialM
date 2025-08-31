@@ -15,7 +15,7 @@ const Batch = () => {
         setBatches(res.data);
         setLoading(false);
       } catch (err) {
-        console.error(err.message);
+        console.error(err.response?.data || err.message);
         setError('Failed to load batches');
         setLoading(false);
       }
