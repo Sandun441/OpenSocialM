@@ -1,33 +1,40 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 
 // Route files
 const authRoutes = require('./routes/auth');
 
-// Create Express app
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => {
-  console.error('❌ MongoDB connection error:', err.message);
-  process.exit(1);
-});
+// 1. Improved MongoDB Connection Logic
+const connectDB = async () => {
+  try {
+    // Note: Options like useNewUrlParser are no longer needed in modern Mongoose
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (err) {
+    console.error(`❌ MongoDB connection error: ${err.message}`);
+    process.exit(1);
+  }
+};
+
+// Call the connection function
+connectDB();
 
 // Mount routes
 app.use('/api/auth', authRoutes);
 
-// Start the server
+// 2. Health Check Route (Good practice for debugging)
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
