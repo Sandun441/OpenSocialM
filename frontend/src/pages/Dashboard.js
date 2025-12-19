@@ -13,7 +13,7 @@ export default function Dashboard() {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="h-screen bg-gray-100 p-4 md:p-8 flex flex-col">
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
@@ -24,7 +24,7 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Grid Section */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-4">
         <DashboardCard
           title="My Profile"
           description="Update your account and view your details"
@@ -71,13 +71,26 @@ function DashboardCard({ title, description, to, icon }) {
   return (
     <div
       onClick={() => navigate(to)}
-      className="cursor-pointer bg-white text-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 transition transform hover:-translate-y-1 hover:scale-105 duration-300"
+      className="h-full cursor-pointer bg-white text-gray-800 p-8 rounded-2xl shadow-lg 
+                 hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 
+                 transition transform hover:-translate-y-1 hover:scale-105 duration-300
+                 /* This centers the whole stack */
+                 flex flex-col items-center justify-center text-center"
     >
-      <div className="flex items-center mb-4">
+      {/* 1. Icon Container: flex + justify-center makes the SVG center itself */}
+      <div className="mb-4 flex justify-center w-full">
         {icon}
-        <h2 className="text-2xl font-semibold ml-4">{title}</h2>
       </div>
-      <p className="text-base text-gray-600">{description}</p>
+      
+      {/* 2. Title: No 'ml-4' here, just the text */}
+      <h2 className="text-2xl font-semibold mb-2 w-full">
+        {title}
+      </h2>
+      
+      {/* 3. Description */}
+      <p className="text-base text-gray-600 max-w-xs">
+        {description}
+      </p>
     </div>
   );
 }
