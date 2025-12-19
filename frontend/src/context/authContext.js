@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) return;
       
       const res = await axios.get('/api/auth/user', {
@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
     } catch (err) {
       localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       setError(err.response?.data?.msg || 'Error loading user');
     }
   };
@@ -54,12 +55,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (formData) => {
+  const login = async (formData,rememberMe) => {
     try {
       setLoading(true);
       clearErrors(); // Now properly defined
       const res = await axios.post('/api/auth/login', formData);
-      localStorage.setItem('token', res.data.token);
+
+      if (rememberMe) {
+        localStorage.setItem('token', res.data.token); // Permanent
+      } else {
+        sessionStorage.setItem('token', res.data.token); // Temporary
+      }
+
       await loadUser();
       return true;
     } catch (err) {

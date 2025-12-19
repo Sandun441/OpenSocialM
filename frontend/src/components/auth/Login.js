@@ -1,17 +1,31 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: '',
+    email: localStorage.getItem('rememberedEmail') || '',
     password: ''
   });
+  const [rememberMe, setRememberMe] = useState(!!localStorage.getItem('rememberedEmail'));
+
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useContext(AuthContext);
+
+  const { login, user } = useContext(AuthContext); 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is already logged in (via context or localStorage)
+    const token = localStorage.getItem('token');
+    if (token || user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
+  
+
 
   const handleChange = (e) => {
     setFormData({
@@ -24,11 +38,17 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+
+    if (rememberMe) {
+    localStorage.setItem('rememberedEmail', formData.email);
+  } else {
+    localStorage.removeItem('rememberedEmail');
+  }
     
     try {
       const success = await login(formData);
       if (success) {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       } else {
         setError('Invalid credentials. Please try again.');
       }
@@ -105,25 +125,20 @@ export default function Login() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-ousl-blue focus:ring-ousl-blue border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-ousl-blue hover:text-ousl-green">
-                  Forgot your password?
-                </a>
-              </div>
+             <input
+                   id="remember-me"
+                   name="remember-me"
+                   type="checkbox"
+                   checked={rememberMe}
+                   onChange={(e) => setRememberMe(e.target.checked)}
+                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                 />
+          <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                Remember me
+          </label>
             </div>
+            
 
             <button
   type="submit"
