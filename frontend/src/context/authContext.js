@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const token = sessionStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) return;
       
       const res = await axios.get('/api/auth/user', {
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (err) {
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       sessionStorage.removeItem('token');
       setError(err.response?.data?.msg || 'Error loading user');
     }
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('/api/auth/register', formData);
       
       if (res.data.token) {
-        localStorage.setItem('token', res.data.token);
+        sessionStorage.setItem('token', res.data.token);
         await loadUser();
         return true;
       } else {
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('/api/auth/login', formData);
 
       if (rememberMe) {
-        localStorage.setItem('token', res.data.token); // Permanent
+        sessionStorage.setItem('token', res.data.token); // Permanent
       } else {
         sessionStorage.setItem('token', res.data.token); // Temporary
       }
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setUser(null);
     setIsAuthenticated(false);
   };

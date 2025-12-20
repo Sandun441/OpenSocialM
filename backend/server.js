@@ -5,6 +5,7 @@ require('dotenv').config();
 
 // Route files
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoutes')
 
 const app = express();
 
@@ -29,6 +30,8 @@ connectDB();
 
 // Mount routes
 app.use('/api/auth', authRoutes);
+
+app.use('/api/users', userRoutes);
 
 // 2. Health Check Route (Good practice for debugging)
 app.get('/', (req, res) => {

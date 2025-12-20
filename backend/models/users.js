@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema({
     enum: ['student', 'lecturer', 'admin'],
     default: 'student'
   },
+  bio: { type: String, default: '' },
+
+  avatar: { type: String, default: '' },
+  
+  coverImage: { type: String, default: '' },
+
   createdAt: {
     type: Date,
     default: Date.now

@@ -46,7 +46,11 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  bio: { type: String, default: ''}, 
+  avatar: { type: String, default: ''}, 
+  coverImage: { type: String, default:'' } 
+
 });
 
 // Encrypt password before save
