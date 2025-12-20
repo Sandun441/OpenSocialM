@@ -4,7 +4,7 @@ const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const authMiddleware = require('../middleware/auth'); // Ensure this is properly imported
+const { protect } = require('../middleware/auth'); // Ensure this is properly imported
 
 // @route   POST api/auth/register
 // @desc    Register user
@@ -99,8 +99,8 @@ router.post('/login', [
 
 // @route   GET api/auth/user
 // @desc    Get logged in user data
-// @access  Private (using authMiddleware)
-router.get('/user', authMiddleware, async (req, res) => {
+// @access  Private (using protect middleware)
+router.get('/user', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
 
