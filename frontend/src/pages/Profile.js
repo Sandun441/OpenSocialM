@@ -50,51 +50,82 @@ const Profile = () => {
   };
 
   // 3. Handle Image Selection & Base64 Conversion
-  const handleImageChange = (e, type) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (type === 'avatar') setAvatarPreview(reader.result);
-        if (type === 'cover') setCoverPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+ const handleImageChange = (e, type) => {
+  const file = e.target.files[0];
+  const MAX_SIZE = 1 * 1024 * 1024; // 1MB limit to stay safe with Express defaults
+
+  if (file) {
+    if (file.size > MAX_SIZE) {
+      // Show professional error message
+      setMessage({ 
+        type: 'error', 
+        text: 'The image is too large. Please select a file smaller than 1MB.' 
+      });
+      // Clear the input so the user has to pick a different one
+      e.target.value = null; 
+      return;
     }
-  };
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (type === 'avatar') setAvatarPreview(reader.result);
+      if (type === 'cover') setCoverPreview(reader.result);
+      setMessage({ type: '', text: '' });// Clear error if new file is okay
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   // 4. Save to Backend
  const handleSubmit = async (e) => {
   e.preventDefault();
-  
+  setIsLoading(true); // Start loading spinner
+
   const token = sessionStorage.getItem('token'); 
-  
-  // --- DEBUG LOGS ---
-  console.log("1. Raw Token from SessionStorage:", token);
-  console.log("2. Type of token:", typeof token);
-  console.log("3. Token Length:", token ? token.length : 0);
-  // ------------------
 
   if (!token || token === "undefined" || token === "null") {
      alert("Token is missing or invalid in Session Storage");
+     setIsLoading(false);
      return;
   }
 
   try {
     const config = {
       headers: {
-        'Authorization': `Bearer ${token.trim()}` // .trim() removes accidental spaces
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token.trim()}`
       }
     };
 
-    const res = await axios.put('/api/users/profile', formData, config);
+    // --- THE FIX IS HERE ---
+    // Combine your text (formData) with your images (the previews)
+    const dataToSend = {
+      ...formData,
+      avatar: avatarPreview,     // Send the Base64 string for the profile pic
+      coverImage: coverPreview   // Send the Base64 string for the cover pic
+    };
+
+    const res = await axios.put('/api/users/profile', dataToSend, config);
+    // -----------------------
     
     setMessage({ type: 'success', text: 'Profile updated!' });
     setIsEditing(false);
-    await loadUser(); 
-  } catch (err) {
-    console.error(err);
-    setMessage({ type: 'error', text: err.response?.data?.msg || 'Update failed' });
-  } finally {
+    if (loadUser) await loadUser(); 
+  }catch (err) {
+  console.error("Update Error:", err);
+  
+  if (err.response?.status === 413) {
+    setMessage({ 
+      type: 'error', 
+      text: 'The images are too large for the server. Please use smaller files.' 
+    });
+  } else {
+    setMessage({ 
+      type: 'error', 
+      text: err.response?.data?.msg || 'Update failed' 
+    });
+  }
+} finally {
     setIsLoading(false);
   }
 };

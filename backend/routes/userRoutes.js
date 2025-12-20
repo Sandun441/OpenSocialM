@@ -7,6 +7,9 @@ const { protect } = require('../middleware/auth'); // Make sure this path is cor
 router.put('/profile', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
+
+    if (req.body.avatar) user.avatar = req.body.avatar;
+    if (req.body.coverImage) user.coverImage = req.body.coverImage;
     if (!user) return res.status(404).json({ msg: 'User not found' });
 
     // Update the fields from the frontend request
