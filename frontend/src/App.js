@@ -10,6 +10,7 @@ import Footer from './components/layout/Footer';
 import Register from './components/auth/Register';
 import AboutUs from './pages/AboutUs';
 import Chat from './pages/Chat';
+import UserProfile from './pages/UserProfile';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/register" element={<Register />} /> 
         <Route path="/about" element={<AboutUs />} />
         <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/profile/:id" element={<UserProfile />} />
           
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
