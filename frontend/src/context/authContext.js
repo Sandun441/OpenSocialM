@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const AuthContext = createContext();
@@ -6,29 +6,52 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const clearErrors = () => setError(null);
 
-  const loadUser = async () => {
-    try {
-      const token = sessionStorage.getItem('token') || sessionStorage.getItem('token');
-      if (!token) return;
-      
-      const res = await axios.get('/api/auth/user', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setUser(res.data);
-      setIsAuthenticated(true);
-    } catch (err) {
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-      setError(err.response?.data?.msg || 'Error loading user');
+
+  useEffect(() => {
+  const initAuth = async () => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      try {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        const res = await axios.get('/api/auth/user'); 
+        setUser(res.data);
+        setIsAuthenticated(true); // <--- Add this
+      } catch (err) {
+        sessionStorage.removeItem('token');
+        setIsAuthenticated(false);
+      }
     }
+    setLoading(false); 
   };
+  initAuth();
+}, []);
+
+  const loadUser = async () => {
+  try {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
+    const res = await axios.get('/api/auth/user', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setUser(res.data);
+    setIsAuthenticated(true); // <--- Critical update
+    setLoading(false);        // <--- Critical update
+  } catch (err) {
+    sessionStorage.removeItem('token');
+    setUser(null);
+    setIsAuthenticated(false);
+    setLoading(false);
+  }
+};
   const register = async (formData) => {
     try {
       setLoading(true);

@@ -2,9 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/authContext';
 import { Link } from 'react-router-dom';
 import axios from '../utils/api';
-import { Search, Filter, MessageSquare, User as UserIcon } from 'lucide-react';
+import { Search, Filter, MessageSquare, User as UserIcon, Users } from 'lucide-react';
 
-// Syncing with your Register.js data
 const degreeProgramMap = {
   'Engineering Technology': [
     'Bachelor of Software Engineering',
@@ -54,14 +53,14 @@ const degreeProgramMap = {
 const faculties = Object.keys(degreeProgramMap);
 
 const Batch = () => {
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Filter States
   const [filters, setFilters] = useState({
     faculty: '',
-    batch: '', // Changed from 'year' to 'batch' to match your registration field
+    batch: '', 
     degreeProgram: ''
   });
 
@@ -70,15 +69,18 @@ const Batch = () => {
     setFilters(prev => ({
       ...prev,
       [name]: value,
-      // Reset degree if faculty changes
       ...(name === 'faculty' ? { degreeProgram: '' } : {})
     }));
   };
 
   useEffect(() => {
     const fetchFilteredUsers = async () => {
+      // Prevent searching if batch is incomplete (e.g. typing "202")
+      if (filters.batch.length > 0 && filters.batch.length < 4) return;
+
       setLoading(true);
       try {
+        // Corrected endpoint: We use /api/users, not /api/batches
         const query = new URLSearchParams(filters).toString();
         const res = await axios.get(`/api/users?${query}`);
         setUsers(res.data);
@@ -92,11 +94,20 @@ const Batch = () => {
     fetchFilteredUsers();
   }, [filters]);
 
+  // Handle Initial Auth Loading
+  if (authLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-indigo-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 bg-gray-50 min-h-screen">
       <div className="mb-10 text-center md:text-left">
-        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Student Directory</h1>
-        <p className="mt-2 text-lg text-gray-600">Connect with your peers across OUSL faculties.</p>
+        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight italic">Student Directory</h1>
+        <p className="mt-2 text-lg text-gray-600 italic">Built by students, for students. Find your peers.</p>
         
         {/* Filter Card */}
         <div className="mt-8 bg-white p-6 rounded-3xl shadow-xl border border-gray-100 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -189,7 +200,7 @@ const Batch = () => {
         </div>
       ) : (
         <div className="bg-white rounded-3xl p-20 text-center shadow-sm border border-dashed border-gray-300">
-          <users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-800">No students found</h2>
           <p className="text-gray-500 mt-2">Try adjusting your filters to find more OUSL peers.</p>
         </div>

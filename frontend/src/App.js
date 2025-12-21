@@ -9,6 +9,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Register from './components/auth/Register';
 import AboutUs from './pages/AboutUs';
+import Chat from './pages/Chat';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} /> 
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/chat/:id" element={<Chat />} />
           
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
