@@ -28,4 +28,45 @@ router.put('/profile', protect, async (req, res) => {
   }
 });
 
+
+// GET http://localhost:5000/api/users (with optional filters)
+// GET http://localhost:5000/api/users (Find Peers)
+router.get('/', protect, async (req, res) => {
+  try {
+    // 1. Destructure based on your new Batch.js filter names
+    const { faculty, batch, degreeProgram } = req.query;
+    
+    // 2. Build the query object
+    let query = {};
+    
+    // Logic: Only filter if a value is actually provided
+    if (faculty) {
+      query.faculty = faculty;
+    }
+
+    if (batch) {
+      // We use the batch field from your Register form
+      query.batch = batch; 
+    }
+    
+    if (degreeProgram) {
+      // Matches the 'degreeProgram' field in your User Model
+      query.degreeProgram = degreeProgram;
+    }
+
+    // 3. Fetch users
+    // - $ne: req.user.id ensures you don't see yourself in the list
+    // - .select('-password') prevents security leaks
+    const users = await User.find({ 
+      ...query, 
+      _id: { $ne: req.user.id } 
+    }).select('-password');
+
+    res.json(users);
+  } catch (err) {
+    console.error("Fetch Users Error:", err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;
