@@ -6,6 +6,7 @@ require('dotenv').config();
 // Route files
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes')
+const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 
@@ -27,6 +28,8 @@ const connectDB = async () => {
 
 // Call the connection function
 connectDB();
+
+app.use('/api/chat', chatRoutes);
 
 // Mount routes
 app.use('/api/auth', authRoutes);
