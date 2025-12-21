@@ -50,6 +50,12 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: ''}, 
   avatar: { type: String, default: ''}, 
   coverImage: { type: String, default:'' } 
+  ,
+  socialLinks: {
+    facebook: { type: String, default: '' },
+    instagram: { type: String, default: '' },
+    whatsapp: { type: String, default: '' }
+  }
 
 });
 

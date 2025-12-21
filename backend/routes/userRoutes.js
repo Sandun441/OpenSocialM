@@ -21,6 +21,13 @@ router.put('/profile', protect, async (req, res) => {
     // Handle Images
     if (req.body.avatar) user.avatar = req.body.avatar;
     if (req.body.coverImage) user.coverImage = req.body.coverImage;
+    if (req.body.socialLinks) {
+      user.socialLinks = {
+        facebook: req.body.socialLinks.facebook,
+        instagram: req.body.socialLinks.instagram,
+        whatsapp: req.body.socialLinks.whatsapp
+      };
+    }
 
     const updatedUser = await user.save();
     res.json(updatedUser);
