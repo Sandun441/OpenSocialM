@@ -11,6 +11,7 @@ import Register from './components/auth/Register';
 import AboutUs from './pages/AboutUs';
 import Chat from './pages/Chat';
 import UserProfile from './pages/UserProfile';
+import Events from './pages/Events';
 
 function App() {
   return (
@@ -18,19 +19,20 @@ function App() {
       <Navbar />
       <main className="flex-grow">
         <Routes>
-        <Route index element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> 
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/chat/:id" element={<Chat />} />
-        <Route path="/profile/:id" element={<UserProfile />} />
-          
+          <Route index element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/chat/:id" element={<Chat />} />
+          <Route path="/profile/:id" element={<UserProfile />} />
+
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />  
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/faculty/:facultyName" element={<Faculty />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/batch" element={<Batch />} />
+            <Route path="/events" element={<Events />} />
           </Route>
         </Routes>
       </main>
