@@ -46,7 +46,7 @@ export default function Dashboard() {
         <DashboardCard
           title="Events & Calendar"
           description="View upcoming academic and university events"
-          to="/calendar"
+          to="/Events"
           icon={<CalendarDays className="w-10 h-10 text-pink-500" />}
         />
         <DashboardCard
@@ -78,19 +78,13 @@ function DashboardCard({ title, description, to, icon }) {
                  flex flex-col items-center justify-center text-center"
     >
       {/* 1. Icon Container: flex + justify-center makes the SVG center itself */}
-      <div className="mb-4 flex justify-center w-full">
-        {icon}
-      </div>
-      
+      <div className="mb-4 flex justify-center w-full">{icon}</div>
+
       {/* 2. Title: No 'ml-4' here, just the text */}
-      <h2 className="text-2xl font-semibold mb-2 w-full">
-        {title}
-      </h2>
-      
+      <h2 className="text-2xl font-semibold mb-2 w-full">{title}</h2>
+
       {/* 3. Description */}
-      <p className="text-base text-gray-600 max-w-xs">
-        {description}
-      </p>
+      <p className="text-base text-gray-600 max-w-xs">{description}</p>
     </div>
   );
 }
