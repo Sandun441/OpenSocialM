@@ -12,6 +12,7 @@ import AboutUs from './pages/AboutUs';
 import Chat from './pages/Chat';
 import UserProfile from './pages/UserProfile';
 import Events from './pages/Events';
+import Discussion from './pages/Discussion';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/batch" element={<Batch />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/discussion" element={<Discussion />} />
           </Route>
         </Routes>
       </main>
