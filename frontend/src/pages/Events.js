@@ -8,16 +8,14 @@ import interactionPlugin from '@fullcalendar/interaction';
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState('7');
+  const [searchTerm, setSearchTerm] = useState(''); // <--- NEW SEARCH STATE
 
-  // State for ADD Modal
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     date: '',
     category: 'Academic',
   });
-
-  // State for DELETE Modal
   const [deleteModal, setDeleteModal] = useState({
     show: false,
     eventId: null,
@@ -52,13 +50,12 @@ const Events = () => {
     setEvents(mockEvents);
   }, []);
 
-  // 2. Timeline Filter Logic
+  // 2. Timeline Filter Logic (Now includes Search!)
   const getFilteredEvents = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to compare dates accurately
+    today.setHours(0, 0, 0, 0);
 
     const futureDate = new Date();
-
     if (filter === '7') futureDate.setDate(today.getDate() + 7);
     else if (filter === '30') futureDate.setDate(today.getDate() + 30);
     else futureDate.setFullYear(today.getFullYear() + 1);
@@ -66,7 +63,13 @@ const Events = () => {
     return events
       .filter((e) => {
         const eventDate = new Date(e.start);
-        return eventDate >= today && eventDate <= futureDate;
+        const matchesDate = eventDate >= today && eventDate <= futureDate;
+        // Check if title or category matches search term (case insensitive)
+        const matchesSearch =
+          e.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          e.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+        return matchesDate && matchesSearch;
       })
       .sort((a, b) => new Date(a.start) - new Date(b.start));
   };
@@ -75,8 +78,6 @@ const Events = () => {
   const getDaysLeft = (dateString) => {
     const eventDate = new Date(dateString);
     const today = new Date();
-
-    // Reset time parts to ensure accurate day calculation
     eventDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
@@ -93,9 +94,7 @@ const Events = () => {
   const handleAddEvent = (e) => {
     e.preventDefault();
     if (!newEvent.title || !newEvent.date) return;
-
     const colorMap = { Exam: '#ef4444', Batch: '#3b82f6', Academic: '#10b981' };
-
     const savedEvent = {
       id: Date.now().toString(),
       title: newEvent.title,
@@ -103,7 +102,6 @@ const Events = () => {
       category: newEvent.category,
       backgroundColor: colorMap[newEvent.category] || '#3b82f6',
     };
-
     setEvents([...events, savedEvent]);
     setShowAddModal(false);
     setNewEvent({ title: '', date: '', category: 'Academic' });
@@ -119,6 +117,20 @@ const Events = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
+      {/* --- CSS ANIMATION STYLE --- */}
+      <style>{`
+        @keyframes slideFade {
+          0% { opacity: 0; transform: translateX(-20px); }
+          10% { opacity: 1; transform: translateX(0); }
+          80% { opacity: 1; transform: translateX(0); }
+          90% { opacity: 0; transform: translateX(10px); }
+          100% { opacity: 0; transform: translateX(10px); }
+        }
+        .animate-tip {
+          animation: slideFade 6s infinite ease-in-out;
+        }
+      `}</style>
+
       {/* --- SECTION 1: TIMELINE --- */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
         <div className="flex justify-between items-center mb-4">
@@ -135,10 +147,14 @@ const Events = () => {
             <option value="30">Next 30 days</option>
             <option value="all">All upcoming</option>
           </select>
+
+          {/* SEARCH INPUT (Now Connected) */}
           <input
             type="text"
             placeholder="Search events..."
             className="border p-2 rounded-lg text-sm bg-gray-50 flex-grow"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
@@ -156,7 +172,6 @@ const Events = () => {
                   key={event.id}
                   className="flex items-center p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition"
                 >
-                  {/* Left: Date Box */}
                   <div className="w-12 text-center mr-4">
                     <div className="text-xs text-gray-500 uppercase font-bold">
                       {new Date(event.start).toLocaleString('default', {
@@ -167,8 +182,6 @@ const Events = () => {
                       {new Date(event.start).getDate()}
                     </div>
                   </div>
-
-                  {/* Middle: Title & Tag */}
                   <div>
                     <h4 className="font-semibold text-gray-800">
                       {event.title}
@@ -180,8 +193,6 @@ const Events = () => {
                       {event.category}
                     </span>
                   </div>
-
-                  {/* Right: Days Left Countdown */}
                   <div
                     className={`ml-auto text-sm font-medium ${
                       isUrgent ? 'text-red-500' : 'text-gray-500'
@@ -195,7 +206,11 @@ const Events = () => {
           ) : (
             <div className="text-center py-8 text-gray-400">
               <div className="text-4xl mb-2">📋</div>
-              <p>No activities require action</p>
+              <p>
+                {searchTerm
+                  ? 'No matching events found'
+                  : 'No activities require action'}
+              </p>
             </div>
           )}
         </div>
@@ -203,7 +218,7 @@ const Events = () => {
 
       {/* --- SECTION 2: CALENDAR --- */}
       <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-2xl font-bold text-gray-800">Calendar</h2>
           <button
             onClick={() => setShowAddModal(true)}
@@ -213,9 +228,12 @@ const Events = () => {
           </button>
         </div>
 
-        <p className="text-sm text-gray-500 mb-2">
-          💡 Tip: Right-click an event to delete it.
-        </p>
+        {/* --- ANIMATED TIP TEXT --- */}
+        <div className="h-6 mb-4 overflow-hidden">
+          <p className="text-sm text-gray-500 animate-tip flex items-center gap-2">
+            <span>💡</span> Tip: Right-click an event to delete it.
+          </p>
+        </div>
 
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -229,7 +247,6 @@ const Events = () => {
           height="auto"
           contentHeight="600px"
           aspectRatio={1.5}
-          // Custom Right Click
           eventDidMount={(info) => {
             info.el.addEventListener('contextmenu', (e) => {
               e.preventDefault();
@@ -328,7 +345,6 @@ const Events = () => {
               </span>
               ?
             </p>
-
             <div className="flex justify-center gap-4">
               <button
                 onClick={() =>

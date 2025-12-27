@@ -52,7 +52,7 @@ export default function Dashboard() {
         <DashboardCard
           title="Discussion Forum"
           description="Ask questions and help others in the community"
-          to="/forum"
+          to="/Discussion"
           icon={<MessageSquare className="w-10 h-10 text-yellow-500" />}
         />
         <DashboardCard
