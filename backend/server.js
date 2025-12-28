@@ -5,7 +5,7 @@ require('dotenv').config();
 
 // Route files
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const postRoutes = require('./routes/posts');
 
@@ -38,6 +38,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
 app.use('/api/posts', postRoutes);
+
+app.use('/api/events', require('./routes/events'));
 
 // 2. Health Check Route (Good practice for debugging)
 app.get('/', (req, res) => {

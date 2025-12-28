@@ -4,11 +4,15 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import axios from 'axios';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState('7');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Loading State to prevent double-clicks
+  const [isSaving, setIsSaving] = useState(false);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
@@ -22,35 +26,38 @@ const Events = () => {
     eventTitle: '',
   });
 
-  // 1. Initial Mock Data
+  // --- 1. FETCH EVENTS ---
   useEffect(() => {
-    const mockEvents = [
-      {
-        id: '1',
-        title: 'Chemistry Mid-term',
-        start: '2025-12-25',
-        category: 'Exam',
-        backgroundColor: '#ef4444',
-      },
-      {
-        id: '2',
-        title: 'Batch Trip Meeting',
-        start: '2025-12-28',
-        category: 'Batch',
-        backgroundColor: '#3b82f6',
-      },
-      {
-        id: '3',
-        title: 'Guest Lecture: AI',
-        start: '2025-12-30',
-        category: 'Academic',
-        backgroundColor: '#10b981',
-      },
-    ];
-    setEvents(mockEvents);
+    const fetchEvents = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        };
+
+        const res = await axios.get('http://localhost:5000/api/events', config);
+
+        const formattedEvents = res.data.map((event) => ({
+          id: event._id,
+          title: event.title,
+          start: event.start,
+          allDay: true, // <--- FIX 1: Hides the "5:30" time
+          category: event.category,
+          backgroundColor: event.backgroundColor,
+        }));
+
+        setEvents(formattedEvents);
+      } catch (err) {
+        console.error('Error fetching events:', err.message);
+      }
+    };
+
+    fetchEvents();
   }, []);
 
-  // 2. Timeline Filter Logic
+  // --- 2. FILTER LOGIC ---
   const getFilteredEvents = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -73,7 +80,7 @@ const Events = () => {
       .sort((a, b) => new Date(a.start) - new Date(b.start));
   };
 
-  // 3. Helper: Calculate Days Left
+  // --- 3. HELPER: DAYS LEFT ---
   const getDaysLeft = (dateString) => {
     const eventDate = new Date(dateString);
     const today = new Date();
@@ -89,37 +96,86 @@ const Events = () => {
     return `${diffDays} days left`;
   };
 
-  // 4. Add Event Logic
-  const handleAddEvent = (e) => {
+  // --- 4. SAVE EVENT (With Anti-Double-Click) ---
+  const handleAddEvent = async (e) => {
     e.preventDefault();
     if (!newEvent.title || !newEvent.date) return;
-    const colorMap = { Exam: '#ef4444', Batch: '#3b82f6', Academic: '#10b981' };
-    const savedEvent = {
-      id: Date.now().toString(),
-      title: newEvent.title,
-      start: newEvent.date,
-      category: newEvent.category,
-      backgroundColor: colorMap[newEvent.category] || '#3b82f6',
-    };
-    setEvents([...events, savedEvent]);
-    setShowAddModal(false);
-    setNewEvent({ title: '', date: '', category: 'Academic' });
+    if (isSaving) return; // Prevent double click
+
+    setIsSaving(true); // Disable button
+
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const body = {
+        title: newEvent.title,
+        date: newEvent.date,
+        category: newEvent.category,
+      };
+
+      const res = await axios.post(
+        'http://localhost:5000/api/events',
+        body,
+        config
+      );
+
+      const savedEvent = {
+        id: res.data._id,
+        title: res.data.title,
+        start: res.data.start,
+        allDay: true, // <--- FIX 1: Ensure new events are also all-day
+        category: res.data.category,
+        backgroundColor: res.data.backgroundColor,
+      };
+
+      setEvents([...events, savedEvent]);
+      setShowAddModal(false);
+      setNewEvent({ title: '', date: '', category: 'Academic' });
+    } catch (err) {
+      console.error('Error saving event:', err.message);
+      alert('Failed to save event.');
+    } finally {
+      setIsSaving(false); // Re-enable button
+    }
   };
 
-  // 5. Confirm Delete Logic
-  const confirmDelete = () => {
-    setEvents(events.filter((e) => e.id !== deleteModal.eventId));
-    setDeleteModal({ show: false, eventId: null, eventTitle: '' });
+  // --- 5. DELETE EVENT (With Anti-Double-Click) ---
+  const confirmDelete = async () => {
+    if (isSaving) return; // Prevent double click
+    setIsSaving(true); // Disable button
+
+    try {
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+
+      await axios.delete(
+        `http://localhost:5000/api/events/${deleteModal.eventId}`,
+        config
+      );
+
+      setEvents(events.filter((e) => e.id !== deleteModal.eventId));
+      setDeleteModal({ show: false, eventId: null, eventTitle: '' });
+    } catch (err) {
+      console.error('Error deleting event:', err.message);
+      alert('Failed to delete event.');
+    } finally {
+      setIsSaving(false); // Re-enable button
+    }
   };
 
   const filteredEvents = getFilteredEvents();
 
   return (
-    // FULL PAGE WRAPPER
     <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-200 p-6">
       <div className="container mx-auto max-w-6xl">
-        
-        {/* --- CSS FOR CALENDAR DARK MODE --- */}
         <style>{`
           @keyframes slideFade {
             0% { opacity: 0; transform: translateX(-20px); }
@@ -131,23 +187,16 @@ const Events = () => {
           .animate-tip {
             animation: slideFade 6s infinite ease-in-out;
           }
-
-          /* --- FULLCALENDAR DARK MODE FIXES --- */
-          /* 1. Force the grid cells to be dark gray (gray-800 = #1f2937) */
           .dark .fc-theme-standard td, 
           .dark .fc-theme-standard th,
           .dark .fc-theme-standard .fc-scrollgrid { 
             background-color: #1f2937; 
-            border-color: #374151; /* gray-700 for borders */
+            border-color: #374151; 
           }
-
-          /* 2. Fix the numbers and text colors */
           .dark .fc-col-header-cell-cushion, 
           .dark .fc-daygrid-day-number { 
-            color: #e5e7eb; /* gray-200 */
+            color: #e5e7eb; 
           }
-
-          /* 3. Fix the Month Title and Buttons */
           .dark .fc-toolbar-title { color: white; }
           .dark .fc-button-primary { 
             background-color: #3b82f6; 
@@ -159,10 +208,12 @@ const Events = () => {
           }
         `}</style>
 
-        {/* --- SECTION 1: TIMELINE --- */}
+        {/* --- TIMELINE SECTION --- */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8 transition-colors">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Timeline</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              Timeline
+            </h2>
           </div>
 
           <div className="flex flex-wrap gap-4 mb-6">
@@ -222,7 +273,9 @@ const Events = () => {
                     </div>
                     <div
                       className={`ml-auto text-sm font-bold ${
-                        isUrgent ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
+                        isUrgent
+                          ? 'text-red-500 dark:text-red-400'
+                          : 'text-gray-500 dark:text-gray-400'
                       }`}
                     >
                       {daysText}
@@ -243,10 +296,12 @@ const Events = () => {
           </div>
         </div>
 
-        {/* --- SECTION 2: CALENDAR --- */}
+        {/* --- CALENDAR SECTION --- */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 relative transition-colors">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Calendar</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+              Calendar
+            </h2>
             <button
               onClick={() => setShowAddModal(true)}
               className="bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 text-white px-4 py-2 rounded-lg shadow transition flex items-center gap-2"
@@ -261,7 +316,6 @@ const Events = () => {
             </p>
           </div>
 
-          {/* WRAPPER CLASS 'dark' for FullCalendar scoped styles */}
           <div className="dark:text-gray-100">
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -293,7 +347,9 @@ const Events = () => {
         {showAddModal && (
           <div className="fixed inset-0 bg-black/60 dark:bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-96 border border-gray-200 dark:border-gray-700 animate-fade-in-up">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Add New Event</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Add New Event
+              </h3>
               <form onSubmit={handleAddEvent}>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -343,15 +399,21 @@ const Events = () => {
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                    disabled={isSaving} // FIX 2: Disable during save
+                    className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors shadow-md"
+                    disabled={isSaving} // FIX 2: Disable during save
+                    className={`px-4 py-2 text-white rounded transition-colors shadow-md ${
+                      isSaving
+                        ? 'bg-blue-400 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
                   >
-                    Save Event
+                    {isSaving ? 'Saving...' : 'Save Event'}
                   </button>
                 </div>
               </form>
@@ -363,7 +425,9 @@ const Events = () => {
         {deleteModal.show && (
           <div className="fixed inset-0 bg-black/60 dark:bg-black/80 flex justify-center items-center z-50 backdrop-blur-sm">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-80 text-center border border-gray-200 dark:border-gray-700 animate-fade-in-up">
-              <div className="text-red-500 dark:text-red-400 text-5xl mb-2">🗑️</div>
+              <div className="text-red-500 dark:text-red-400 text-5xl mb-2">
+                🗑️
+              </div>
               <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
                 Delete Event?
               </h3>
@@ -377,17 +441,27 @@ const Events = () => {
               <div className="flex justify-center gap-4">
                 <button
                   onClick={() =>
-                    setDeleteModal({ show: false, eventId: null, eventTitle: '' })
+                    setDeleteModal({
+                      show: false,
+                      eventId: null,
+                      eventTitle: '',
+                    })
                   }
-                  className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
+                  disabled={isSaving}
+                  className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors disabled:opacity-50"
                 >
                   No
                 </button>
                 <button
                   onClick={confirmDelete}
-                  className="px-6 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 font-medium transition-colors shadow-md"
+                  disabled={isSaving}
+                  className={`px-6 py-2 text-white rounded-lg font-medium transition-colors shadow-md ${
+                    isSaving
+                      ? 'bg-red-400 cursor-not-allowed'
+                      : 'bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700'
+                  }`}
                 >
-                  Yes
+                  {isSaving ? 'Deleting...' : 'Yes'}
                 </button>
               </div>
             </div>
