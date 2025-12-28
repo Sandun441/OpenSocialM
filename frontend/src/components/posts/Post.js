@@ -53,11 +53,14 @@ const Post = ({ post, deletePost }) => {
               </div>
             </Link>
           </div>
-         {/* ALWAYS SHOW BUTTON (For Testing) */}
-<button onClick={handleDelete} className="text-red-500">
-  DELETE ME
-</button>
-         
+          {user && user._id === post.user && (
+            <button
+              onClick={() => deletePost(post._id)}
+              className="text-red-600 hover:text-red-800"
+            >
+              Delete
+            </button>
+          )}
         </div>
         <div className="mt-4">
           <p className="text-gray-900">{post.text}</p>
