@@ -58,7 +58,7 @@ export default function Dashboard() {
         <DashboardCard
           title="Academic Progress"
           description="Track your course completion and grades"
-          to="/progress"
+          to="/academicprogress"
           icon={<GraduationCap className="w-10 h-10 text-indigo-500" />}
         />
       </section>
@@ -81,10 +81,14 @@ function DashboardCard({ title, description, to, icon }) {
       <div className="mb-4 flex justify-center w-full">{icon}</div>
 
       {/* 2. Title: No 'ml-4' here, just the text */}
-      <h2 className="text-2xl font-semibold mb-2 w-full dark:text-white">{title}</h2>
+      <h2 className="text-2xl font-semibold mb-2 w-full dark:text-white">
+        {title}
+      </h2>
 
       {/* 3. Description */}
-      <p className="text-base text-gray-600 dark:text-gray-300 max-w-xs">{description}</p>
+      <p className="text-base text-gray-600 dark:text-gray-300 max-w-xs">
+        {description}
+      </p>
     </div>
   );
 }
