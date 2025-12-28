@@ -58,7 +58,7 @@ export default function Dashboard() {
         <DashboardCard
           title="Academic Progress"
           description="Track your course completion and grades"
-          to="/progress"
+          to="/AcademicProgress"
           icon={<GraduationCap className="w-10 h-10 text-indigo-500" />}
         />
       </section>
