@@ -7,6 +7,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes')
 const chatRoutes = require('./routes/chatRoutes');
+const postRoutes = require('./routes/posts');
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use('/api/users', userRoutes);
+
+app.use('/api/posts', postRoutes);
 
 // 2. Health Check Route (Good practice for debugging)
 app.get('/', (req, res) => {

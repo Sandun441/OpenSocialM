@@ -4,6 +4,8 @@ import axios from 'axios';
 import PostForm from '../components/posts/PostForm';
 import PostItem from '../components/posts/PostItem';
 import { AuthContext } from '../context/authContext';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
 const Faculty = () => {
   const { facultyName } = useParams();
@@ -14,64 +16,64 @@ const Faculty = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`/api/posts/faculty/${facultyName}`);
+        const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
+        const res = await axios.get(`http://localhost:5000/api/posts/faculty/${facultyName}`, config);
         setPosts(res.data);
         setLoading(false);
       } catch (err) {
-        console.error(err.message);
+        console.error(err);
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, [facultyName]);
 
-  const addPost = post => {
-    setPosts([post, ...posts]);
+  const addPost = (newPost) => {
+    setPosts([newPost, ...posts]);
   };
 
-  const deletePost = id => {
+  // ✅ 1. ADD THIS FUNCTION
+  // This removes the post from the screen immediately after the API deletes it
+  const deletePost = (id) => {
     setPosts(posts.filter(post => post._id !== id));
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{facultyName} Faculty</h1>
-        <p className="mt-2 text-lg text-gray-600">
-          Connect with students and lecturers from your faculty
-        </p>
-      </div>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">{facultyName} Faculty Hub</h1>
+          <p className="text-gray-600">Connect with your batch mates and lecturers.</p>
+        </div>
 
-      {user && user.faculty === facultyName && (
-        <div className="mb-8">
-          <PostForm faculty={facultyName} addPost={addPost} />
-        </div>
-      )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+             {user && user.faculty === facultyName ? (
+                <PostForm faculty={facultyName} addPost={addPost} />
+             ) : (
+                <div className="bg-white p-4 rounded shadow text-center text-gray-500">
+                  You are viewing the {facultyName} feed.
+                </div>
+             )}
+          </div>
 
-      {loading ? (
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+          <div className="lg:col-span-2">
+            {loading ? (
+              <p>Loading posts...</p>
+            ) : posts.length > 0 ? (
+              posts.map(post => (
+                <PostItem 
+                  key={post._id} 
+                  post={post} 
+                  deletePost={deletePost} // ✅ 2. PASS THE PROP HERE
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No posts found. Be the first to post!</p>
+            )}
+          </div>
         </div>
-      ) : posts.length > 0 ? (
-        <div className="space-y-6">
-          {posts.map(post => (
-            <PostItem 
-              key={post._id} 
-              post={post} 
-              deletePost={deletePost} 
-              showActions={user && user.faculty === facultyName}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900">No posts yet</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Be the first to share something with your faculty!
-          </p>
-        </div>
-      )}
+      </main>
     </div>
   );
 };
