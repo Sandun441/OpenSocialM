@@ -34,7 +34,7 @@ export default function Dashboard() {
         <DashboardCard
           title="Faculty"
           description="Explore your faculty's announcements and events"
-          to="/faculty/science"
+          to={`/faculty/${user?.faculty}`}
           icon={<GraduationCap className="w-10 h-10 text-green-500" />}
         />
         <DashboardCard

@@ -4,8 +4,7 @@ import axios from 'axios';
 import PostForm from '../components/posts/PostForm';
 import PostItem from '../components/posts/PostItem';
 import { AuthContext } from '../context/authContext';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
+
 
 const Faculty = () => {
   const { facultyName } = useParams();
@@ -32,7 +31,6 @@ const Faculty = () => {
     setPosts([newPost, ...posts]);
   };
 
-  // ✅ 1. ADD THIS FUNCTION
   // This removes the post from the screen immediately after the API deletes it
   const deletePost = (id) => {
     setPosts(posts.filter(post => post._id !== id));
@@ -65,7 +63,7 @@ const Faculty = () => {
                 <PostItem 
                   key={post._id} 
                   post={post} 
-                  deletePost={deletePost} // ✅ 2. PASS THE PROP HERE
+                  deletePost={deletePost} 
                 />
               ))
             ) : (
