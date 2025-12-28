@@ -50,12 +50,12 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-900 pb-20">
       {/* 1. Header & Cover Photo */}
-      <div className="relative h-60 w-full bg-gradient-to-r from-indigo-600 to-purple-700">
+      <div className="relative h-60 w-full bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-800 dark:to-purple-900">
         <button 
           onClick={() => navigate(-1)} 
-          className="absolute top-6 left-6 p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full text-white transition-all z-20"
+          className="absolute top-6 left-6 p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full text-white dark:text-white transition-all z-20"
         >
           <ChevronLeft size={24} />
         </button>
@@ -78,10 +78,10 @@ const UserProfile = () => {
 
           {/* Name and Quick Actions - Adjusted pt-10 to move name down */}
           <div className="flex-1 text-center md:text-left pt-10 md:pt-8">
-            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               {student.firstName} {student.lastName}
             </h1>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2 text-gray-600 font-medium">
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2 text-gray-600 dark:text-gray-300 font-medium">
               <span className="flex items-center"><GraduationCap size={18} className="mr-1.5 text-indigo-600" /> {student.degreeProgram}</span>
             </div>
           </div>
@@ -100,30 +100,30 @@ const UserProfile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center">
-                <GraduationCap size={20} className="mr-2 text-indigo-600" /> Academic Info
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-5 flex items-center">
+                <GraduationCap size={20} className="mr-2 text-indigo-600 dark:text-indigo-400" /> Academic Info
               </h3>
               <div className="space-y-4">
-                <div className="flex items-center p-3 bg-gray-50 rounded-2xl">
-                   <Clock size={18} className="text-gray-400 mr-3" />
+                <div className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-2xl">
+                   <Clock size={18} className="text-gray-400 dark:text-gray-300 mr-3" />
                    <div>
-                     <p className="text-[10px] uppercase text-gray-400 font-bold leading-none mb-1">Status</p>
-                     <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Batch {student.batch}</p>
+                     <p className="text-[10px] uppercase text-gray-400 dark:text-gray-300 font-bold leading-none mb-1">Status</p>
+                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Batch {student.batch}</p>
                    </div>
                 </div>
-                <div className="flex items-center p-3 bg-gray-50 rounded-2xl">
-                   <GraduationCap size={18} className="text-gray-400 mr-3" />
+                <div className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-2xl">
+                   <GraduationCap size={18} className="text-gray-400 dark:text-gray-300 mr-3" />
                    <div>
-                     <p className="text-[10px] uppercase text-gray-400 font-bold leading-none mb-1">Faculty</p>
-                     <p className="text-sm font-semibold text-gray-700">{student.faculty}</p>
+                     <p className="text-[10px] uppercase text-gray-400 dark:text-gray-300 font-bold leading-none mb-1">Faculty</p>
+                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{student.faculty}</p>
                    </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 tracking-tight">Connect</h3>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 tracking-tight">Connect</h3>
               <div className="flex space-x-4">
                 {/* Facebook */}
                 <a 
@@ -133,8 +133,8 @@ const UserProfile = () => {
                   disabled={!student.socialLinks?.facebook}
                   className={`p-4 rounded-2xl transition-all duration-300 flex-1 flex justify-center ${
                     student.socialLinks?.facebook 
-                      ? "bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2] hover:text-white shadow-sm" 
-                      : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                      ? "bg-[#1877F2]/10 dark:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#1877F2] hover:bg-[#1877F2] dark:hover:bg-[#1877F2]/80 hover:text-white shadow-sm" 
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-500 cursor-not-allowed"
                   }`}
                 >
                   <Facebook size={22} />
@@ -148,8 +148,8 @@ const UserProfile = () => {
                   disabled={!student.socialLinks?.instagram}
                   className={`p-4 rounded-2xl transition-all duration-300 flex-1 flex justify-center ${
                     student.socialLinks?.instagram 
-                      ? "bg-[#E4405F]/10 text-[#E4405F] hover:bg-[#E4405F] hover:text-white shadow-sm" 
-                      : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                      ? "bg-[#E4405F]/10 dark:bg-[#E4405F]/20 text-[#E4405F] dark:text-[#E4405F] hover:bg-[#E4405F] dark:hover:bg-[#E4405F]/80 hover:text-white shadow-sm" 
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-500 cursor-not-allowed"
                   }`}
                 >
                   <Instagram size={22} />
@@ -163,8 +163,8 @@ const UserProfile = () => {
                   disabled={!student.socialLinks?.whatsapp}
                   className={`p-4 rounded-2xl transition-all duration-300 flex-1 flex justify-center ${
                     student.socialLinks?.whatsapp 
-                      ? "bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white shadow-sm" 
-                      : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                      ? "bg-[#25D366]/10 dark:bg-[#25D366]/20 text-[#25D366] dark:text-[#25D366] hover:bg-[#25D366] dark:hover:bg-[#25D366]/80 hover:text-white shadow-sm" 
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-500 cursor-not-allowed"
                   }`}
                 >
                   <WhatsAppIcon size={22} />
@@ -174,19 +174,19 @@ const UserProfile = () => {
           </div>
 
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">Biography</h3>
-              <p className="text-gray-600 leading-relaxed text-lg">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">Biography</h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                 {student.bio || `${student.firstName} is a dedicated student at Open University of Sri Lanka.`}
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-sm border border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Recent Activity</h3>
               </div>
-              <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-100 rounded-3xl">
-                <p className="text-sm text-gray-400">Activity from the Faculty feed will appear here.</p>
+              <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-3xl">
+                <p className="text-sm text-gray-400 dark:text-gray-500">Activity from the Faculty feed will appear here.</p>
               </div>
             </div>
           </div>

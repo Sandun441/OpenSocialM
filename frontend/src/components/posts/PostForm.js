@@ -27,10 +27,10 @@ const PostForm = ({ faculty, addPost }) => {
   };
 
   return (
-    <div className="bg-white shadow sm:rounded-lg">
+    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Create a Post</h3>
-        <div className="mt-2 max-w-xl text-sm text-gray-500">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Create a Post</h3>
+        <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
           <p>Share something with your faculty members.</p>
         </div>
         <form onSubmit={handleSubmit} className="mt-5">
@@ -42,7 +42,7 @@ const PostForm = ({ faculty, addPost }) => {
               id="text"
               name="text"
               rows={3}
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="What's on your mind?"
               value={text}
               onChange={(e) => setText(e.target.value)}

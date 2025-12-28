@@ -5,7 +5,6 @@ import PostForm from '../components/posts/PostForm';
 import PostItem from '../components/posts/PostItem';
 import { AuthContext } from '../context/authContext';
 
-
 const Faculty = () => {
   const { facultyName } = useParams();
   const { user } = useContext(AuthContext);
@@ -31,17 +30,16 @@ const Faculty = () => {
     setPosts([newPost, ...posts]);
   };
 
-  // This removes the post from the screen immediately after the API deletes it
   const deletePost = (id) => {
     setPosts(posts.filter(post => post._id !== id));
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">{facultyName} Faculty Hub</h1>
-          <p className="text-gray-600">Connect with your batch mates and lecturers.</p>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{facultyName} Faculty Hub</h1>
+          <p className="text-gray-600 dark:text-gray-300">Connect with your batch mates and lecturers.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -49,7 +47,7 @@ const Faculty = () => {
              {user && user.faculty === facultyName ? (
                 <PostForm faculty={facultyName} addPost={addPost} />
              ) : (
-                <div className="bg-white p-4 rounded shadow text-center text-gray-500">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-center text-gray-500 dark:text-gray-400">
                   You are viewing the {facultyName} feed.
                 </div>
              )}
@@ -57,7 +55,10 @@ const Faculty = () => {
 
           <div className="lg:col-span-2">
             {loading ? (
-              <p>Loading posts...</p>
+              // ✅ FIXED: Added dark mode text color (dark:text-white) and centering
+              <p className="text-center text-gray-800 dark:text-white text-lg font-medium py-10">
+                Loading posts...
+              </p>
             ) : posts.length > 0 ? (
               posts.map(post => (
                 <PostItem 
@@ -67,7 +68,7 @@ const Faculty = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-gray-500">No posts found. Be the first to post!</p>
+              <p className="text-center text-gray-500 dark:text-gray-400">No posts found. Be the first to post!</p>
             )}
           </div>
         </div>

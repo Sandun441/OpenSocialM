@@ -85,20 +85,20 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
           Create your OUSL Social account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
           Please verify your university details
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {error && (
-            <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
+            <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-700 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -106,7 +106,7 @@ const Register = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
                 </div>
               </div>
             </div>
@@ -115,7 +115,7 @@ const Register = () => {
           <form className="space-y-6" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   First name
                 </label>
                 <div className="mt-1">
@@ -126,13 +126,13 @@ const Register = () => {
                     value={formData.firstName}
                     onChange={onChange}
                     required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Last name
                 </label>
                 <div className="mt-1">
@@ -143,14 +143,14 @@ const Register = () => {
                     value={formData.lastName}
                     onChange={onChange}
                     required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email address
               </label>
               <div className="mt-1">
@@ -162,13 +162,13 @@ const Register = () => {
                   value={formData.email}
                   onChange={onChange}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
               <div className="mt-1">
@@ -181,13 +181,13 @@ const Register = () => {
                   onChange={onChange}
                   required
                   minLength={6}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 OUSL Registration Number
               </label>
               <div className="mt-1">
@@ -198,20 +198,20 @@ const Register = () => {
                   value={formData.registrationNumber}
                   onChange={onChange}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="faculty" className="block text-sm font-medium text-gray-700">Faculty</label>
+              <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Faculty</label>
               <select
                 id="faculty"
                 name="faculty"
                 value={formData.faculty}
                 onChange={onChange}
                 required
-                className=" mt-1 block w-full px-3 py-2 rounded-md  placeholder-gray-400 focus:border-indigo-500 sm:text-sm"
+                className=" mt-1 block w-full px-3 py-2 rounded-md placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
               >
                 <option value="">Select your faculty</option>
                 {faculties.map(fac => (
@@ -222,14 +222,14 @@ const Register = () => {
 
             {formData.faculty && (
               <div>
-                <label htmlFor="degreeProgram" className="block text-sm font-medium text-gray-700">Degree Program</label>
+                <label htmlFor="degreeProgram" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Degree Program</label>
                 <select
                   id="degreeProgram"
                   name="degreeProgram"
                   value={formData.degreeProgram}
                   onChange={onChange}
                   required
-                  className=" mt-1 block w-full px-3 py-2 rounded-md  placeholder-gray-400 focus:border-indigo-500 sm:text-sm"
+                  className=" mt-1 block w-full px-3 py-2 rounded-md placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
                 >
                   <option value="">Select your degree program</option>
                   {degreeProgramMap[formData.faculty]?.map(deg => (
@@ -240,7 +240,7 @@ const Register = () => {
             )}
 
             <div>
-              <label htmlFor="batch" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Batch Year (e.g., 2022)
               </label>
               <div className="mt-1">
@@ -253,7 +253,7 @@ const Register = () => {
                   value={formData.batch}
                   onChange={onChange}
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -280,10 +280,10 @@ const Register = () => {
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-gray-300 dark:border-gray-700" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
+                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                   Already have an account?
                 </span>
               </div>
@@ -292,7 +292,7 @@ const Register = () => {
             <div className="mt-6">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Login
               </button>

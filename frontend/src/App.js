@@ -13,9 +13,11 @@ import Chat from './pages/Chat';
 import UserProfile from './pages/UserProfile';
 import Events from './pages/Events';
 import Discussion from './pages/Discussion';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
+    <ThemeProvider>
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
@@ -40,6 +42,7 @@ function App() {
       </main>
       <Footer />
     </div>
+    </ThemeProvider>
   );
 }
 

@@ -132,14 +132,14 @@ const Events = () => {
       `}</style>
 
       {/* --- SECTION 1: TIMELINE --- */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-700">Timeline</h2>
+          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Timeline</h2>
         </div>
 
         <div className="flex flex-wrap gap-4 mb-6">
           <select
-            className="border p-2 rounded-lg text-sm bg-gray-50"
+            className="border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           >
@@ -152,7 +152,7 @@ const Events = () => {
           <input
             type="text"
             placeholder="Search events..."
-            className="border p-2 rounded-lg text-sm bg-gray-50 flex-grow"
+            className="border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white flex-grow"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -170,20 +170,20 @@ const Events = () => {
               return (
                 <div
                   key={event.id}
-                  className="flex items-center p-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition"
+                  className="flex items-center p-3 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                 >
                   <div className="w-12 text-center mr-4">
-                    <div className="text-xs text-gray-500 uppercase font-bold">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
                       {new Date(event.start).toLocaleString('default', {
                         month: 'short',
                       })}
                     </div>
-                    <div className="text-lg font-bold text-gray-800">
+                    <div className="text-lg font-bold text-gray-800 dark:text-white">
                       {new Date(event.start).getDate()}
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">
+                    <h4 className="font-semibold text-gray-800 dark:text-white">
                       {event.title}
                     </h4>
                     <span
@@ -204,7 +204,7 @@ const Events = () => {
               );
             })
           ) : (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-gray-400 dark:text-gray-500">
               <div className="text-4xl mb-2">📋</div>
               <p>
                 {searchTerm
@@ -217,12 +217,12 @@ const Events = () => {
       </div>
 
       {/* --- SECTION 2: CALENDAR --- */}
-      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 relative">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 relative">
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-2xl font-bold text-gray-800">Calendar</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Calendar</h2>
           <button
             onClick={() => setShowAddModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center gap-2"
+            className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white dark:text-white px-4 py-2 rounded-lg shadow transition flex items-center gap-2"
           >
             <span>+</span> New event
           </button>
@@ -230,7 +230,7 @@ const Events = () => {
 
         {/* --- ANIMATED TIP TEXT --- */}
         <div className="h-6 mb-4 overflow-hidden">
-          <p className="text-sm text-gray-500 animate-tip flex items-center gap-2">
+          <p className="text-sm text-gray-500 dark:text-gray-400 animate-tip flex items-center gap-2">
             <span>💡</span> Tip: Right-click an event to delete it.
           </p>
         </div>
@@ -262,18 +262,18 @@ const Events = () => {
 
       {/* --- MODAL 1: ADD EVENT --- */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-xl font-bold mb-4">Add New Event</h3>
+        <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-96">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Add New Event</h3>
             <form onSubmit={handleAddEvent}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Event Title
                 </label>
                 <input
                   type="text"
                   required
-                  className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   value={newEvent.title}
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, title: e.target.value })
@@ -281,13 +281,13 @@ const Events = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Date
                 </label>
                 <input
                   type="date"
                   required
-                  className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   value={newEvent.date}
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, date: e.target.value })
@@ -295,11 +295,11 @@ const Events = () => {
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category
                 </label>
                 <select
-                  className="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   value={newEvent.category}
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, category: e.target.value })
@@ -314,13 +314,13 @@ const Events = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+                  className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white dark:text-white rounded hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
                   Save Event
                 </button>
@@ -332,15 +332,15 @@ const Events = () => {
 
       {/* --- MODAL 2: CONFIRM DELETE --- */}
       {deleteModal.show && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-80 text-center">
-            <div className="text-red-500 text-5xl mb-2">🗑️</div>
-            <h3 className="text-lg font-bold text-gray-800 mb-2">
+        <div className="fixed inset-0 bg-black dark:bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-80 text-center">
+            <div className="text-red-500 dark:text-red-400 text-5xl mb-2">🗑️</div>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2">
               Delete Event?
             </h3>
-            <p className="text-gray-600 mb-6 text-sm">
+            <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
               Are you sure you want to delete <br />
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-gray-800 dark:text-white">
                 "{deleteModal.eventTitle}"
               </span>
               ?
@@ -350,13 +350,13 @@ const Events = () => {
                 onClick={() =>
                   setDeleteModal({ show: false, eventId: null, eventTitle: '' })
                 }
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+                className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium"
               >
                 No
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
+                className="px-6 py-2 bg-red-500 dark:bg-red-700 text-white dark:text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-600 font-medium"
               >
                 Yes
               </button>
