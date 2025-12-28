@@ -13,11 +13,11 @@ export default function Dashboard() {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="h-screen bg-gray-100 p-4 md:p-8 flex flex-col">
+    <div className="h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8 flex flex-col">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-800 mb-2">
+          <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">
             Welcome back, {user?.firstName} 👋
           </h1>
         </div>
@@ -71,20 +71,20 @@ function DashboardCard({ title, description, to, icon }) {
   return (
     <div
       onClick={() => navigate(to)}
-      className="h-full cursor-pointer bg-white text-gray-800 p-8 rounded-2xl shadow-lg 
-                 hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 
+      // I have added dark:hover:from-gray-700 and dark:hover:to-gray-800 below
+      className="h-full cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-8 rounded-2xl shadow-lg 
+                 hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700 dark:hover:to-gray-800
                  transition transform hover:-translate-y-1 hover:scale-105 duration-300
-                 /* This centers the whole stack */
                  flex flex-col items-center justify-center text-center"
     >
       {/* 1. Icon Container: flex + justify-center makes the SVG center itself */}
       <div className="mb-4 flex justify-center w-full">{icon}</div>
 
       {/* 2. Title: No 'ml-4' here, just the text */}
-      <h2 className="text-2xl font-semibold mb-2 w-full">{title}</h2>
+      <h2 className="text-2xl font-semibold mb-2 w-full dark:text-white">{title}</h2>
 
       {/* 3. Description */}
-      <p className="text-base text-gray-600 max-w-xs">{description}</p>
+      <p className="text-base text-gray-600 dark:text-gray-300 max-w-xs">{description}</p>
     </div>
   );
 }

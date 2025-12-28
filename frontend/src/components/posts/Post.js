@@ -35,7 +35,7 @@ const Post = ({ post, deletePost }) => {
   };
 
   return (
-    <div className="bg-white shadow sm:rounded-lg mb-4">
+    <div className="bg-white dark:bg-gray-800 shadow sm:rounded-lg mb-4">
       <div className="px-4 py-5 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -46,8 +46,8 @@ const Post = ({ post, deletePost }) => {
                 alt=""
               />
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">{post.name}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{post.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {new Date(post.date).toLocaleDateString()}
                 </p>
               </div>
@@ -63,13 +63,13 @@ const Post = ({ post, deletePost }) => {
           )}
         </div>
         <div className="mt-4">
-          <p className="text-gray-900">{post.text}</p>
+          <p className="text-gray-900 dark:text-white">{post.text}</p>
         </div>
         <div className="mt-4 flex items-center space-x-4">
           <button
             onClick={handleLike}
             className={`flex items-center space-x-1 ${
-              likes.includes(user?._id) ? 'text-blue-600' : 'text-gray-500'
+              likes.includes(user?._id) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
             }`}
           >
             <svg
@@ -85,7 +85,7 @@ const Post = ({ post, deletePost }) => {
             </svg>
             <span>{likes.length}</span>
           </button>
-          <button className="flex items-center space-x-1 text-gray-500">
+          <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
             <svg
               className="h-5 w-5"
               fill="currentColor"
@@ -107,7 +107,7 @@ const Post = ({ post, deletePost }) => {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="flex-1 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
             <button
               type="submit"
@@ -127,16 +127,16 @@ const Post = ({ post, deletePost }) => {
                   src={comment.avatar || 'https://via.placeholder.com/32'}
                   alt=""
                 />
-                <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2">
+                <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {comment.name}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(comment.date).toLocaleDateString()}
                     </p>
                   </div>
-                  <p className="mt-1 text-sm text-gray-700">{comment.text}</p>
+                  <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">{comment.text}</p>
                 </div>
               </div>
             ))}

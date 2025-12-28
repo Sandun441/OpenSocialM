@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/authContext';
-import axios from '../utils/api'; // Using your custom axios with interceptors
+import axios from '../utils/api'; 
 import { 
   Loader2, CheckCircle, XCircle, Camera, Mail, 
   GraduationCap, Users, BookOpen, School, 
@@ -88,13 +88,10 @@ const Profile = () => {
         ...formData,
         avatar: avatarPreview,
         coverImage: coverPreview,
-        socialLinks: links // Sending links object to backend
+        socialLinks: links 
       };
-      console.log("Data being sent to server:", dataToSend);
 
-      // No need for manual headers; your interceptor handles the Token
       await axios.put('/api/users/profile', dataToSend);
-
       
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
       setIsEditing(false);
@@ -110,135 +107,147 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
-      <div className="bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-100">
+    // 1. FULL PAGE WRAPPER (Handles Dark Mode Background)
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-200 py-8">
+      
+      <div className="max-w-5xl mx-auto px-4 animate-fade-in">
         
-        {/* COVER PHOTO */}
-        <div className="relative h-56 bg-gray-200">
-          <img 
-            src={coverPreview || 'https://images.unsplash.com/photo-1557683316-973673baf926'} 
-            className="w-full h-full object-cover" alt="Cover"
-          />
-          {isEditing && (
-            <button onClick={() => coverInputRef.current.click()} className="absolute top-4 right-4 p-3 bg-black/60 rounded-full text-white hover:bg-black/80 shadow-lg transition">
-              <Camera className="w-5 h-5" />
-            </button>
-          )}
-          <input type="file" ref={coverInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'cover')} />
-        </div>
-
-        {/* PROFILE HEADER */}
-        <div className="relative px-8 pb-8">
-          <div className="flex flex-col md:flex-row items-end -mt-20 md:space-x-6">
-            <div className="relative group">
-              <img
-                className="w-40 h-40 rounded-3xl border-8 border-white object-cover bg-white shadow-xl"
-                src={avatarPreview || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=4f46e5&color=fff&size=200`}
-                alt="Avatar"
-              />
-              {isEditing && (
-                <button onClick={() => avatarInputRef.current.click()} className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-300">
-                  <Camera className="text-white w-10 h-10" />
-                </button>
-              )}
-              <input type="file" ref={avatarInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'avatar')} />
-            </div>
-            
-            <div className="mt-6 md:mt-0 flex-grow pb-2">
-              <h1 className="text-4xl font-extrabold text-gray-900">{user?.firstName} {user?.lastName}</h1>
-              <p className="flex items-center text-indigo-600 font-bold text-lg mt-1">
-                <School className="w-5 h-5 mr-2" /> {user?.degreeProgram || 'OUSL Student'}
-              </p>
-            </div>
-
-            {!isEditing && (
-              <button onClick={() => setIsEditing(true)} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition shadow-lg active:scale-95">
-                Edit Profile
+        {/* CARD CONTAINER */}
+        <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+          
+          {/* COVER PHOTO */}
+          <div className="relative h-56 bg-gray-200 dark:bg-gray-700">
+            <img 
+              src={coverPreview || 'https://images.unsplash.com/photo-1557683316-973673baf926'} 
+              className="w-full h-full object-cover" alt="Cover"
+            />
+            {isEditing && (
+              <button onClick={() => coverInputRef.current.click()} className="absolute top-4 right-4 p-3 bg-black/60 rounded-full text-white hover:bg-black/80 shadow-lg transition">
+                <Camera className="w-5 h-5" />
               </button>
             )}
+            <input type="file" ref={coverInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'cover')} />
           </div>
-        </div>
 
-        {/* CONTENT */}
-        <div className="p-8 border-t border-gray-50">
-          {message.text && (
-            <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-              {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-              <span className="font-medium">{message.text}</span>
-            </div>
-          )}
-
-          {isEditing ? (
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
-                <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
-                <InputField label="Degree Program" name="degreeProgram" value={formData.degreeProgram} onChange={handleChange} />
-                <InputField label="Faculty" name="faculty" value={formData.faculty} onChange={handleChange} />
-                <InputField label="Batch Year" name="batch" value={formData.batch} onChange={handleChange} />
-              </div>
-
-              {/* SOCIAL LINKS INPUTS */}
-              <div className="bg-gray-50 p-6 rounded-3xl space-y-4 border border-gray-100">
-                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Connect Links</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <SocialInput icon={<Facebook size={18}/>} label="Facebook URL" value={links.facebook} onChange={(val) => setLinks({...links, facebook: val})} />
-                  <SocialInput icon={<Instagram size={18}/>} label="Insta Username" value={links.instagram} onChange={(val) => setLinks({...links, instagram: val})} />
-                  <SocialInput icon={<MessageCircle size={18}/>} label="WhatsApp Number" value={links.whatsapp} onChange={(val) => setLinks({...links, whatsapp: val})} placeholder="e.g. 94771234567" />
-                </div>
+          {/* PROFILE HEADER */}
+          <div className="relative px-8 pb-8">
+            <div className="flex flex-col md:flex-row items-end -mt-20 md:space-x-6">
+              <div className="relative group">
+                <img
+                  className="w-40 h-40 rounded-3xl border-8 border-white dark:border-gray-800 object-cover bg-white dark:bg-gray-800 shadow-xl"
+                  src={avatarPreview || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=4f46e5&color=fff&size=200`}
+                  alt="Avatar"
+                />
+                {isEditing && (
+                  <button onClick={() => avatarInputRef.current.click()} className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-300">
+                    <Camera className="text-white w-10 h-10" />
+                  </button>
+                )}
+                <input type="file" ref={avatarInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'avatar')} />
               </div>
               
-              <textarea 
-                name="bio" rows={4} value={formData.bio} onChange={handleChange} 
-                className="w-full p-4 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-500 transition-all" 
-                placeholder="Write your bio..."
-              />
-
-              <div className="flex justify-end gap-4">
-                <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2 text-gray-400 font-bold">Cancel</button>
-                <button type="submit" disabled={isLoading} className="bg-indigo-600 text-white px-10 py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2">
-                  {isLoading && <Loader2 className="w-5 h-5 animate-spin" />} Save Profile
-                </button>
+              <div className="mt-6 md:mt-0 flex-grow pb-2">
+                <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">{user?.firstName} {user?.lastName}</h1>
+                <p className="flex items-center text-indigo-600 dark:text-indigo-400 font-bold text-lg mt-1">
+                  <School className="w-5 h-5 mr-2" /> {user?.degreeProgram || 'OUSL Student'}
+                </p>
               </div>
-            </form>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-               <div className="md:col-span-1 space-y-8">
-                  <DetailItem icon={<Mail/>} label="Email" value={user?.email} />
-                  <DetailItem icon={<BookOpen/>} label="Faculty" value={user?.faculty} />
-                  <DetailItem icon={<Users/>} label="Batch" value={user?.batch} />
-               </div>
-               <div className="md:col-span-2">
-                  <div className="bg-gray-50/50 p-8 rounded-3xl border border-gray-100 h-full">
-                    <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Biography</h3>
-                    <p className="text-gray-700 text-lg italic">{user?.bio || "No bio added yet."}</p>
-                  </div>
-               </div>
+
+              {!isEditing && (
+                <button onClick={() => setIsEditing(true)} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition shadow-lg active:scale-95">
+                  Edit Profile
+                </button>
+              )}
             </div>
-          )}
+          </div>
+
+          {/* CONTENT */}
+          <div className="p-8 border-t border-gray-50 dark:border-gray-700">
+            {message.text && (
+              <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'}`}>
+                {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                <span className="font-medium">{message.text}</span>
+              </div>
+            )}
+
+            {isEditing ? (
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
+                  <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
+                  <InputField label="Degree Program" name="degreeProgram" value={formData.degreeProgram} onChange={handleChange} />
+                  <InputField label="Faculty" name="faculty" value={formData.faculty} onChange={handleChange} />
+                  <InputField label="Batch Year" name="batch" value={formData.batch} onChange={handleChange} />
+                </div>
+
+                {/* SOCIAL LINKS INPUTS */}
+                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-3xl space-y-4 border border-gray-100 dark:border-gray-600">
+                  <h3 className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">Connect Links</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <SocialInput icon={<Facebook size={18}/>} label="Facebook URL" value={links.facebook} onChange={(val) => setLinks({...links, facebook: val})} />
+                    <SocialInput icon={<Instagram size={18}/>} label="Insta Username" value={links.instagram} onChange={(val) => setLinks({...links, instagram: val})} />
+                    <SocialInput icon={<MessageCircle size={18}/>} label="WhatsApp Number" value={links.whatsapp} onChange={(val) => setLinks({...links, whatsapp: val})} placeholder="e.g. 94771234567" />
+                  </div>
+                </div>
+                
+                <textarea 
+                  name="bio" rows={4} value={formData.bio} onChange={handleChange} 
+                  className="w-full p-4 rounded-2xl border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
+                  placeholder="Write your bio..."
+                />
+
+                <div className="flex justify-end gap-4">
+                  <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2 text-gray-400 dark:text-gray-300 font-bold hover:text-gray-600 dark:hover:text-white">Cancel</button>
+                  <button type="submit" disabled={isLoading} className="bg-indigo-600 text-white px-10 py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2 hover:bg-indigo-700 transition">
+                    {isLoading && <Loader2 className="w-5 h-5 animate-spin" />} Save Profile
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                 <div className="md:col-span-1 space-y-8">
+                    <DetailItem icon={<Mail/>} label="Email" value={user?.email} />
+                    <DetailItem icon={<BookOpen/>} label="Faculty" value={user?.faculty} />
+                    <DetailItem icon={<Users/>} label="Batch" value={user?.batch} />
+                 </div>
+                 <div className="md:col-span-2">
+                    <div className="bg-gray-50/50 dark:bg-gray-700/50 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 h-full">
+                      <h3 className="text-sm font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest mb-4">Biography</h3>
+                      <p className="text-gray-700 dark:text-gray-300 text-lg italic whitespace-pre-wrap">{user?.bio || "No bio added yet."}</p>
+                    </div>
+                 </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-// HELPER COMPONENTS
+// HELPER COMPONENTS (Updated with Dark Mode classes)
 const InputField = ({ label, name, value, onChange }) => (
   <div>
-    <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
-    <input type="text" name={name} value={value} onChange={onChange} className="w-full px-5 py-3 rounded-2xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-500" />
+    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{label}</label>
+    <input 
+      type="text" 
+      name={name} 
+      value={value} 
+      onChange={onChange} 
+      className="w-full px-5 py-3 rounded-2xl border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors" 
+    />
   </div>
 );
 
 const SocialInput = ({ icon, label, value, onChange, placeholder }) => (
   <div className="relative">
-    <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">{label}</label>
+    <label className="block text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase mb-1">{label}</label>
     <div className="relative">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{icon}</div>
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300">{icon}</div>
       <input 
         type="text" value={value} placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)} 
-        className="w-full pl-11 pr-4 py-2 bg-white rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
+        className="w-full pl-11 pr-4 py-2 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white transition-colors" 
       />
     </div>
   </div>
@@ -246,10 +255,10 @@ const SocialInput = ({ icon, label, value, onChange, placeholder }) => (
 
 const DetailItem = ({ icon, label, value }) => (
   <div className="flex items-start space-x-4">
-    <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600">{icon}</div>
+    <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600 dark:text-indigo-400">{icon}</div>
     <div>
-      <p className="text-xs text-gray-400 font-black uppercase mb-1 tracking-widest">{label}</p>
-      <p className="text-gray-900 font-bold text-lg">{value || '---'}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500 font-black uppercase mb-1 tracking-widest">{label}</p>
+      <p className="text-gray-900 dark:text-white font-bold text-lg">{value || '---'}</p>
     </div>
   </div>
 );
