@@ -41,15 +41,6 @@ A comprehensive social and academic collaboration platform built for the student
 **Database:**
 * ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) **MongoDB** (Mongoose ODM)
 
-## 📸 Screenshots
-
-| **Dark Mode Dashboard** | **Faculty Feed** |
-|:---:|:---:|
-| ![Dashboard](https://via.placeholder.com/400x200?text=Dashboard+Dark+Mode) | ![Feed](https://via.placeholder.com/400x200?text=Faculty+Feed) |
-
-| **Events Calendar** | **GPA Calculator** |
-|:---:|:---:|
-| ![Calendar](https://via.placeholder.com/400x200?text=Events+Calendar) | ![GPA](https://via.placeholder.com/400x200?text=Academic+Progress) |
 
 ## 💻 Getting Started
 
@@ -59,7 +50,3 @@ Follow these steps to run the project locally.
 * Node.js installed (v14 or higher)
 * MongoDB installed locally or a MongoDB Atlas URI
 
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/your-username/ousl-community.git](https://github.com/your-username/ousl-community.git)
-cd ousl-community
