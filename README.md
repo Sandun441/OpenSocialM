@@ -1,4 +1,4 @@
-# 🎓 University Community Platform
+# University Community Platform
 
 ![Project Banner](https://via.placeholder.com/1200x400?text=OUSL+Community+Platform) 
 A comprehensive social and academic collaboration platform built for the students of the **Open University of Sri Lanka**. This application bridges the gap between distance learning and campus life by providing tools for networking, academic tracking, and event management.
