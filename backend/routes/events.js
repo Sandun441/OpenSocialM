@@ -1,14 +1,27 @@
 // backend/routes/events.js
 const express = require('express');
 const router = express.Router();
-// IMPORT PROTECT CORRECTLY
 const { protect } = require('../middleware/auth');
 const Event = require('../models/Event');
+
+// 🎨 Centralized category → color mapping
+const getCategoryColor = (category) => {
+  switch (category) {
+    case 'Academic':
+      return '#22c55e'; // green
+    case 'Exam':
+      return '#ef4444'; // red
+    case 'Batch':
+      return '#3b82f6'; // blue
+    default:
+      return '#6b7280'; // gray fallback
+  }
+};
 
 // @route   GET api/events
 router.get('/', protect, async (req, res) => {
   try {
-    const events = await Event.find().sort({ start: 1 });
+    const events = await Event.find({ user: req.user.id }).sort({ start: 1 });
     res.json(events);
   } catch (err) {
     console.error(err.message);
@@ -29,7 +42,7 @@ router.post('/', protect, async (req, res) => {
       title,
       start: date,
       category,
-      backgroundColor: category === 'Exam' ? '#ef4444' : '#3b82f6', // Simple color logic
+      backgroundColor: getCategoryColor(category),
       user: req.user.id,
     });
 
