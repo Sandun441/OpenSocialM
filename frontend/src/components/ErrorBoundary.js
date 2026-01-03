@@ -1,6 +1,5 @@
 // frontend/src/components/ErrorBoundary.js
 import React from 'react';
-import ThemeToggle from '../ThemeToggle';
 
 export default class ErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -17,7 +16,6 @@ export default class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="p-4 text-red-500">
-           <ThemeToggle />
           Something went wrong. Please refresh the page.
         </div>
       );
