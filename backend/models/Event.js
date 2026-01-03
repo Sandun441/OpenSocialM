@@ -7,22 +7,19 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   start: {
-    // This matches 'date' from your frontend form
     type: Date,
     required: true,
   },
   category: {
     type: String,
-    enum: ['Academic', 'Exam', 'Batch', 'General'],
+    enum: ['Academic', 'Exam', 'Batch'],
     default: 'Academic',
   },
-  // We can derive color on frontend, or store it here.
-  // Storing it allows custom colors later.
   backgroundColor: {
     type: String,
+    required: true,
   },
   user: {
-    // Link to the user who created it
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
   },
