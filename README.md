@@ -50,3 +50,7 @@ Follow these steps to run the project locally.
 * Node.js installed (v14 or higher)
 * MongoDB installed locally or a MongoDB Atlas URI
 
+## After setting up install the dependacies (npm install) and ,
+* frontend - npm start
+* backend - npm start / node server.js
+
