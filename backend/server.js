@@ -32,7 +32,6 @@ connectDB();
 
 app.use('/api/chat', chatRoutes);
 
-// Mount routes
 app.use('/api/auth', authRoutes);
 
 app.use('/api/users', userRoutes);
@@ -40,6 +39,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 
 app.use('/api/events', require('./routes/events'));
+
+app.use('/api/academic', require('./routes/academic'));
 
 // 2. Health Check Route (Good practice for debugging)
 app.get('/', (req, res) => {
