@@ -11,7 +11,7 @@ import Register from './components/auth/Register';
 import AboutUs from './pages/AboutUs';
 import Chat from './pages/Chat';
 import UserProfile from './pages/UserProfile';
-import Events from './pages/Events';
+import EventsCalendar from './pages/EventsCalendar';
 import Discussion from './pages/Discussion';
 import AcademicProgress from './pages/AcademicProgress';
 import { ThemeProvider } from './context/ThemeContext';
@@ -36,7 +36,7 @@ function App() {
               <Route path="/faculty/:facultyName" element={<Faculty />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/batch" element={<Batch />} />
-              <Route path="/events" element={<Events />} />
+              <Route path="/events" element={<EventsCalendar />} />
               <Route path="/discussion" element={<Discussion />} />
               <Route path="/AcademicProgress" element={<AcademicProgress />} />
             </Route>

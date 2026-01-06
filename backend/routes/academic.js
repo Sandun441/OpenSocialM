@@ -118,9 +118,6 @@ router.get('/progress', protect, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-// ... Keep existing add-result and catalog routes ...
-// (Add them here if you wiped the file, otherwise just replace the GET /progress route)
-// Re-adding essential routes just in case:
 
 router.get('/catalog', protect, async (req, res) => {
   const courses = await Course.find().select('code name credits');
