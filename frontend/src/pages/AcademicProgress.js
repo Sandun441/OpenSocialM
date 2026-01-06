@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { 
-  Trophy, 
   TrendingUp, 
   BookOpen, 
   PlusCircle, 
-  Calculator, 
   AlertCircle,
   Search,
   X,
   CheckCircle, 
-  XCircle
+  XCircle,
+  Trash2,
+  AlertTriangle 
 } from 'lucide-react';
 
 const AcademicProgress = () => {
@@ -26,9 +26,9 @@ const AcademicProgress = () => {
 
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showSimulator, setShowSimulator] = useState(false);
-
-  // --- TOAST STATE (CENTERED) ---
+  
+  // --- DELETE CONFIRMATION STATE ---
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null, code: '' });
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   // --- AUTOCOMPLETE STATE ---
@@ -37,8 +37,10 @@ const AcademicProgress = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const wrapperRef = useRef(null); 
 
-  // Form State (Default to Semester 1)
-  const [newResult, setNewResult] = useState({ courseCode: '', grade: 'A', semester: '1' });
+  // Form State
+  const [searchInput, setSearchInput] = useState('');
+  const [pendingResults, setPendingResults] = useState([]);
+  const [batchSemester, setBatchSemester] = useState('1');
 
   // --- HELPER: SHOW TOAST ---
   const showToast = (message, type = 'success') => {
@@ -79,14 +81,13 @@ const AcademicProgress = () => {
   }, []);
 
   // --- HANDLERS ---
-  const handleCodeChange = (e) => {
+  const handleSearchChange = (e) => {
     const input = e.target.value.toUpperCase();
-    setNewResult({ ...newResult, courseCode: input });
-
+    setSearchInput(input);
     if (input.length > 0) {
       const matches = courseCatalog.filter(course => 
-        course.code.includes(input) || 
-        course.name.toUpperCase().includes(input)
+        (course.code.includes(input) || course.name.toUpperCase().includes(input)) &&
+        !pendingResults.some(r => r.courseCode === course.code)
       );
       setSuggestions(matches);
       setShowSuggestions(true);
@@ -95,27 +96,68 @@ const AcademicProgress = () => {
     }
   };
 
-  const selectSuggestion = (course) => {
-    setNewResult({ ...newResult, courseCode: course.code });
+  const addCourseToBatch = (course) => {
+    const newEntry = {
+      id: Date.now(),
+      courseCode: course.code,
+      courseName: course.name,
+      grade: 'A',
+      semester: batchSemester
+    };
+    setPendingResults([...pendingResults, newEntry]);
+    setSearchInput('');
     setShowSuggestions(false);
   };
 
-  const handleAddResult = async (e) => {
+  const updateEntry = (id, field, value) => {
+    setPendingResults(pendingResults.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    ));
+  };
+
+  const removeEntry = (id) => {
+    setPendingResults(pendingResults.filter(item => item.id !== id));
+  };
+
+  const handleBatchSave = async (e) => {
     e.preventDefault();
+    if (pendingResults.length === 0) return;
+
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
       
-      await axios.post('http://localhost:5000/api/academic/add-result', newResult, config);
+      const payload = {
+        results: pendingResults.map(r => ({
+          courseCode: r.courseCode,
+          grade: r.grade,
+          semester: r.semester
+        }))
+      };
       
+      await axios.post('http://localhost:5000/api/academic/add-results-batch', payload, config);
       await fetchProgress(); 
       setShowAddModal(false);
-      setNewResult({ courseCode: '', grade: 'A', semester: '1' }); // Reset to Sem 1
-      
-      showToast("Result added successfully!", "success");
-
+      setPendingResults([]);
+      showToast(`Successfully saved ${pendingResults.length} results!`, "success");
     } catch (err) {
-      showToast(err.response?.data?.msg || "Failed to add result.", "error");
+      showToast("Failed to save results.", "error");
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const config = { headers: { 'x-auth-token': token } };
+      
+      await axios.delete(`http://localhost:5000/api/academic/result/${deleteModal.id}`, config);
+      
+      await fetchProgress(); 
+      setDeleteModal({ show: false, id: null, code: '' }); 
+      showToast("Course result deleted.", "success");
+      
+    } catch (err) {
+      showToast("Failed to delete result.", "error");
     }
   };
 
@@ -144,7 +186,7 @@ const AcademicProgress = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8 transition-colors duration-200 relative">
       
-      {/* --- 🔥 CENTERED TOAST NOTIFICATION --- */}
+      {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[100] flex items-center gap-4 px-8 py-6 rounded-2xl shadow-2xl border animate-fade-in-up transition-all duration-300 ${
           toast.type === 'success' 
@@ -162,9 +204,6 @@ const AcademicProgress = () => {
             </h4>
             <p className="text-base text-gray-500 dark:text-gray-400 mt-1">{toast.message}</p>
           </div>
-          <button onClick={() => setToast({...toast, show: false})} className="ml-6 text-gray-400 hover:text-gray-600">
-            <X size={24} />
-          </button>
         </div>
       )}
 
@@ -180,19 +219,12 @@ const AcademicProgress = () => {
               Bachelor of Software Engineering Honours
             </p>
           </div>
-          <div className="flex gap-3">
-            <button 
-              onClick={() => setShowSimulator(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm font-medium"
-            >
-              <Calculator size={18} />
-              Simulator
-            </button>
+          <div>
             <button 
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-md font-medium"
+              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 font-bold"
             >
-              <PlusCircle size={18} />
+              <PlusCircle size={20} />
               Add Result
             </button>
           </div>
@@ -206,9 +238,7 @@ const AcademicProgress = () => {
             </div>
             <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current GPA</p>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-5xl font-extrabold text-gray-900 dark:text-white">
-                {data.gpa}
-              </span>
+              <span className="text-5xl font-extrabold text-gray-900 dark:text-white">{data.gpa}</span>
               <span className="text-sm text-gray-400">/ 4.00</span>
             </div>
             <div className="mt-4">
@@ -224,12 +254,8 @@ const AcademicProgress = () => {
               <BookOpen size={20} className="text-gray-400" />
             </div>
             <div className="flex items-end gap-2 mb-4">
-              <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                {data.completedCredits}
-              </span>
-              <span className="text-lg text-gray-400 mb-1">
-                / {data.totalCreditsRequired} Credits
-              </span>
+              <span className="text-4xl font-bold text-gray-900 dark:text-white">{data.completedCredits}</span>
+              <span className="text-lg text-gray-400 mb-1">/ {data.totalCreditsRequired} Credits</span>
             </div>
             <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3">
               <div 
@@ -237,9 +263,6 @@ const AcademicProgress = () => {
                 style={{ width: `${(data.completedCredits / data.totalCreditsRequired) * 100}%` }}
               ></div>
             </div>
-            <p className="text-xs text-gray-400 mt-2 text-right">
-              {Math.round((data.completedCredits / data.totalCreditsRequired) * 100)}% Completed
-            </p>
           </div>
 
           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-center gap-3">
@@ -267,7 +290,6 @@ const AcademicProgress = () => {
               {data.courses.length} Courses Found
             </span>
           </div>
-          
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -277,6 +299,7 @@ const AcademicProgress = () => {
                   <th className="p-5 font-semibold">Credits</th>
                   <th className="p-5 font-semibold">Status</th>
                   <th className="p-5 font-semibold">Grade</th>
+                  <th className="p-5 font-semibold text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -288,7 +311,6 @@ const AcademicProgress = () => {
                         <div className="text-sm text-gray-500 dark:text-gray-400">{course.name}</div>
                       </td>
                       <td className="p-5 text-gray-600 dark:text-gray-300">
-                        {/* If semester is saved, show it, otherwise show Level */}
                         <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-bold border border-blue-100 dark:border-blue-800">
                           {course.semester || '?'}
                         </span>
@@ -296,13 +318,9 @@ const AcademicProgress = () => {
                       <td className="p-5 text-gray-600 dark:text-gray-300">{course.credits}</td>
                       <td className="p-5">
                         {course.status === 'Completed' ? (
-                          <span className="text-xs font-medium text-green-600 flex items-center gap-1">
-                             ✓ Completed
-                          </span>
+                          <span className="text-xs font-medium text-green-600 flex items-center gap-1">✓ Completed</span>
                         ) : (
-                          <span className="text-xs font-medium text-yellow-600 flex items-center gap-1">
-                             ⏳ {course.status}
-                          </span>
+                          <span className="text-xs font-medium text-yellow-600 flex items-center gap-1">⏳ {course.status}</span>
                         )}
                       </td>
                       <td className="p-5">
@@ -310,11 +328,20 @@ const AcademicProgress = () => {
                           {course.grade}
                         </span>
                       </td>
+                      <td className="p-5 text-right">
+                        <button 
+                          onClick={() => setDeleteModal({ show: true, id: course.id, code: course.code })}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
+                          title="Delete Result"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="p-12 text-center text-gray-400">
+                    <td colSpan="6" className="p-12 text-center text-gray-400">
                       <div className="flex flex-col items-center gap-2">
                         <AlertCircle size={32} />
                         <p>No results found. Add your first result to see stats!</p>
@@ -328,113 +355,164 @@ const AcademicProgress = () => {
         </div>
       </div>
 
-      {/* --- MODAL: ADD RESULT (FIXED: SEMESTER 1-8) --- */}
+      {/* --- BATCH RESULT MODAL --- */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add Exam Result</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600"><X size={20}/></button>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Batch Result Entry</h3>
+                <p className="text-sm text-gray-500 mt-1">Add one or multiple subjects at once.</p>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600"><X size={24}/></button>
             </div>
             
-            <form onSubmit={handleAddResult} className="p-6 space-y-4">
-              
-              {/* AUTOCOMPLETE INPUT */}
-              <div className="relative" ref={wrapperRef}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Code</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="Type code or name (e.g. EEX...)"
-                    className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none uppercase"
-                    value={newResult.courseCode}
-                    onChange={handleCodeChange}
-                    required
-                  />
-                  <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
-                </div>
+            <div className="p-6 overflow-y-auto flex-grow">
+              <div className="flex gap-4 mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                 <div className="flex-1">
+                   <label className="block text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-1">
+                     Default Semester
+                   </label>
+                   <select 
+                     className="w-full p-2 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                     value={batchSemester}
+                     onChange={(e) => setBatchSemester(e.target.value)}
+                   >
+                     {[1, 2, 3, 4, 5, 6, 7, 8].map(s => <option key={s} value={s}>Semester {s}</option>)}
+                   </select>
+                 </div>
+                 <div className="flex-[3]">
+                    <label className="block text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider mb-1">
+                      Search & Add Course
+                    </label>
+                    <div className="relative" ref={wrapperRef}>
+                      <input 
+                        type="text" 
+                        placeholder="Type Code (e.g. EEX3467) or Name..."
+                        className="w-full p-2 pl-9 bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-700 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+                        value={searchInput}
+                        onChange={handleSearchChange}
+                      />
+                      <Search className="absolute left-2.5 top-2.5 text-blue-400" size={16} />
+                      
+                      {showSuggestions && suggestions.length > 0 && (
+                        <ul className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                          {suggestions.map((course) => (
+                            <li 
+                              key={course._id}
+                              onClick={() => addCourseToBatch(course)}
+                              className="p-3 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-50 dark:border-gray-700 last:border-0 flex justify-between items-center"
+                            >
+                              <div>
+                                <span className="font-bold text-gray-800 dark:text-white text-sm">{course.code}</span>
+                                <span className="mx-2 text-gray-300">|</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{course.name}</span>
+                              </div>
+                              <PlusCircle size={16} className="text-blue-500" />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                 </div>
+              </div>
 
-                {/* SUGGESTION LIST */}
-                {showSuggestions && suggestions.length > 0 && (
-                  <ul className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-xl max-h-60 overflow-y-auto">
-                    {suggestions.map((course) => (
-                      <li 
-                        key={course._id}
-                        onClick={() => selectSuggestion(course)}
-                        className="p-3 hover:bg-blue-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-50 dark:border-gray-700 last:border-0"
+              <div className="space-y-3">
+                {pendingResults.length > 0 ? (
+                  pendingResults.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/30 rounded-xl border border-gray-200 dark:border-gray-700 animate-fade-in-up">
+                      <div className="flex-1">
+                        <div className="font-bold text-gray-800 dark:text-white">{item.courseCode}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{item.courseName}</div>
+                      </div>
+                      <select 
+                        className="w-24 p-2 text-xs bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg outline-none"
+                        value={item.semester}
+                        onChange={(e) => updateEntry(item.id, 'semester', e.target.value)}
                       >
-                        <div className="font-bold text-gray-800 dark:text-white text-sm">{course.code}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{course.name}</div>
-                      </li>
-                    ))}
-                  </ul>
+                         {[1, 2, 3, 4, 5, 6, 7, 8].map(s => <option key={s} value={s}>Sem {s}</option>)}
+                      </select>
+                      <select 
+                        className={`w-20 p-2 text-sm font-bold border rounded-lg outline-none ${
+                           item.grade.startsWith('A') ? 'text-green-600 border-green-200 bg-green-50' : 
+                           item.grade.startsWith('B') ? 'text-blue-600 border-blue-200 bg-blue-50' :
+                           item.grade.startsWith('C') ? 'text-yellow-600 border-yellow-200 bg-yellow-50' :
+                           'text-red-600 border-red-200 bg-red-50'
+                        }`}
+                        value={item.grade}
+                        onChange={(e) => updateEntry(item.id, 'grade', e.target.value)}
+                      >
+                        {['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'E'].map(g => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                      <button 
+                        onClick={() => removeEntry(item.id)}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
+                    <BookOpen className="mx-auto text-gray-300 mb-2" size={32} />
+                    <p className="text-gray-400 text-sm">No subjects added yet.<br/>Search above to build your list.</p>
+                  </div>
                 )}
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Grade</label>
-                   <select 
-                     className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
-                     value={newResult.grade}
-                     onChange={(e) => setNewResult({...newResult, grade: e.target.value})}
-                   >
-                     {['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'E'].map(g => (
-                       <option key={g} value={g}>{g}</option>
-                     ))}
-                   </select>
-                </div>
-                <div>
-                   {/* ✅ FIXED: DROPDOWN FOR SEMESTER 1-8 */}
-                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Semester</label>
-                   <select 
-                    className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
-                    value={newResult.semester}
-                    onChange={(e) => setNewResult({...newResult, semester: e.target.value})}
-                   >
-                     {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
-                       <option key={s} value={s}>Semester {s}</option>
-                     ))}
-                   </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4">
+            <div className="p-6 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+              <span className="text-sm text-gray-500 font-medium">
+                {pendingResults.length} Result{pendingResults.length !== 1 && 's'} ready to save
+              </span>
+              <div className="flex gap-3">
+                <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl font-medium transition shadow-sm">Cancel</button>
                 <button 
-                  type="button" 
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition"
+                  onClick={handleBatchSave}
+                  disabled={pendingResults.length === 0}
+                  className={`px-6 py-2.5 text-white rounded-xl font-medium transition shadow-lg shadow-blue-500/30 flex items-center gap-2 ${
+                    pendingResults.length === 0 ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
                 >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="flex-1 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition shadow-lg shadow-blue-500/30"
-                >
-                  Save Result
+                  <CheckCircle size={18} />
+                  Save All
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
 
-      {/* SIMULATOR MODAL */}
-      {showSimulator && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
-              <Trophy size={48} className="text-yellow-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">GPA Simulator</h3>
-              <p className="text-gray-500 mt-2 mb-6">
-                Use this tool to predict how future grades will affect your GPA.
-              </p>
-              <button 
-                onClick={() => setShowSimulator(false)}
-                className="w-full py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-medium"
-              >
-                Close
-              </button>
-           </div>
+      {/* --- CONFIRM DELETE MODAL --- */}
+      {deleteModal.show && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[70] p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center animate-fade-in-up border border-gray-100 dark:border-gray-700">
+             <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="text-red-500" size={32} />
+             </div>
+             <h3 className="text-xl font-bold text-gray-900 dark:text-white">Delete Result?</h3>
+             <p className="text-gray-500 mt-2 mb-6">
+               Are you sure you want to remove <strong className="text-gray-800 dark:text-white">{deleteModal.code}</strong> from your history? 
+               <br/><span className="text-xs text-red-400">This action cannot be undone.</span>
+             </p>
+             <div className="flex gap-3">
+               <button 
+                 onClick={() => setDeleteModal({ show: false, id: null, code: '' })}
+                 className="flex-1 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+               >
+                 Cancel
+               </button>
+               <button 
+                 onClick={confirmDelete}
+                 className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition shadow-lg shadow-red-500/30"
+               >
+                 Yes, Delete
+               </button>
+             </div>
+          </div>
         </div>
       )}
     </div>

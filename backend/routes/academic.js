@@ -32,6 +32,7 @@ const getDegreeClass = (gpa) => {
 };
 
 // @route   GET api/academic/progress
+// @desc    Calculate GPA and Degree Status based on OUSL Rules
 router.get('/progress', protect, async (req, res) => {
   try {
     const results = await StudentResult.find({ user: req.user.id }).populate('course');
@@ -40,17 +41,15 @@ router.get('/progress', protect, async (req, res) => {
     let completedCredits = 0;
     let levelBreakdown = { 3: 0, 4: 0, 5: 0, 6: 0 };
     
-    // Filter out valid results (must have a course attached)
+    // Filter out valid results
     const validResults = results.filter(r => r.course);
 
-    // Calculate Total Credits & Level Breakdown (Includes Level 3)
+    // Calculate Total Credits & Level Breakdown
     const formattedCourses = validResults.map(result => {
       const gp = getGradePoint(result.grade);
       const credits = result.course.credits;
       const level = result.course.level;
       
-      // Pass Condition: GP >= 2.0 (C) is standard pass, but D (1.0) often counts for credit accumulation
-      // We'll count anything D (1.0) or above as "Credits Earned" for the total count
       if (gp >= 1.0) {
         completedCredits += credits;
         if (levelBreakdown[level] !== undefined) levelBreakdown[level] += credits;
@@ -63,33 +62,30 @@ router.get('/progress', protect, async (req, res) => {
         credits: credits,
         level: level,
         grade: result.grade,
+        semester: result.semester, // ✅ THIS LINE WAS MISSING!
         status: gp >= 2.0 ? 'Completed' : (gp >= 1.0 ? 'Conditional Pass' : 'Failed')
       };
     });
 
     // --- 2. THE 70-CREDIT GPA ALGORITHM ---
     
-    // Step A: Assign Priority based on OUSL Rules
     const rankedCourses = validResults.map(r => {
       const level = r.course.level;
       const isCompulsory = r.course.isCompulsory;
-      let priority = 99; // Default: Ignore (e.g. Level 3)
+      let priority = 99; 
 
-      if (level >= 5 && isCompulsory) priority = 1;      // (1) Compulsory L5 & L6
-      else if (level >= 5 && !isCompulsory) priority = 2; // (2) Elective L5 & L6
-      else if (level === 4 && isCompulsory) priority = 3; // (3) Compulsory L4
+      if (level >= 5 && isCompulsory) priority = 1;      
+      else if (level >= 5 && !isCompulsory) priority = 2; 
+      else if (level === 4 && isCompulsory) priority = 3; 
       
       return { ...r.toObject(), gp: getGradePoint(r.grade), priority };
     })
-    .filter(r => r.priority !== 99 && r.gp >= 2.0) // Only include Passed courses in Priority 1-3
+    .filter(r => r.priority !== 99 && r.gp >= 2.0) 
     .sort((a, b) => {
-      // Sort by Priority (1 -> 2 -> 3)
       if (a.priority !== b.priority) return a.priority - b.priority;
-      // If same priority, pick best grades first to maximize GPA (Student friendly assumption)
       return b.gp - a.gp; 
     });
 
-    // Step B: Select exactly 70 Credits
     let creditsCounted = 0;
     let totalWeightedPoints = 0;
     const TARGET_CREDITS = 70;
@@ -99,16 +95,12 @@ router.get('/progress', protect, async (req, res) => {
 
       const available = item.course.credits;
       const needed = TARGET_CREDITS - creditsCounted;
-      
-      // "Part Credit" Logic: Take strictly what is needed to reach 70
       const creditsToTake = Math.min(available, needed);
 
       totalWeightedPoints += (creditsToTake * item.gp);
       creditsCounted += creditsToTake;
     }
 
-    // Step C: Compute Final GPA
-    // If student has < 70 eligible credits, divide by what they have (Running Average)
     const divisor = creditsCounted > 0 ? creditsCounted : 1;
     const gpa = (totalWeightedPoints / divisor).toFixed(2);
 
@@ -126,7 +118,6 @@ router.get('/progress', protect, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-
 // ... Keep existing add-result and catalog routes ...
 // (Add them here if you wiped the file, otherwise just replace the GET /progress route)
 // Re-adding essential routes just in case:
@@ -153,6 +144,79 @@ router.post('/add-result', protect, async (req, res) => {
     }
     res.json(result);
   } catch (err) {
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   POST api/academic/add-results-batch
+// @desc    Add MULTIPLE results at once
+router.post('/add-results-batch', protect, async (req, res) => {
+  const { results } = req.body; // Expecting an array: [{ courseCode, grade, semester }, ...]
+
+  try {
+    if (!results || results.length === 0) {
+      return res.status(400).json({ msg: 'No results provided' });
+    }
+
+    const processedResults = [];
+
+    // Process each result in the array
+    for (const item of results) {
+      const { courseCode, grade, semester } = item;
+
+      // 1. Find the course ID
+      const course = await Course.findOne({ code: courseCode });
+      if (!course) continue; // Skip invalid codes (safety check)
+
+      // 2. Update or Create the result
+      let result = await StudentResult.findOne({ user: req.user.id, course: course._id });
+      
+      if (result) {
+        result.grade = grade;
+        result.semester = semester;
+        await result.save();
+      } else {
+        result = new StudentResult({
+          user: req.user.id,
+          course: course._id,
+          grade,
+          semester
+        });
+        await result.save();
+      }
+      processedResults.push(result);
+    }
+
+    res.json({ msg: `Successfully saved ${processedResults.length} results`, data: processedResults });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+// @route   DELETE api/academic/result/:id
+// @desc    Delete a saved result
+router.delete('/result/:id', protect, async (req, res) => {
+  try {
+    const result = await StudentResult.findById(req.params.id);
+
+    // 1. Check if result exists
+    if (!result) {
+      return res.status(404).json({ msg: 'Result not found' });
+    }
+
+    // 2. Security Check: Ensure the user owns this result
+    if (result.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'Not authorized' });
+    }
+
+    await result.deleteOne();
+    res.json({ msg: 'Result removed' });
+
+  } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
