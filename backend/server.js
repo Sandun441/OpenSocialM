@@ -42,6 +42,8 @@ app.use('/api/events', require('./routes/events'));
 
 app.use('/api/academic', require('./routes/academic'));
 
+app.use('/api/discussion', require('./routes/discussion'));
+
 // 2. Health Check Route (Good practice for debugging)
 app.get('/', (req, res) => {
   res.send('API is running...');
