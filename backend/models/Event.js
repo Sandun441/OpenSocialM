@@ -1,32 +1,21 @@
-// backend/models/Event.js
 const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+  title: { type: String, required: true },
+  date: { type: Date, required: true },
+  description: { type: String },
+  faculty: { type: String, required: true },
+  degree: { type: String, required: true },
+  type: { type: String, default: 'General' },
+  
+  // ✅ MUST BE 'createdBy' to match the Route and Frontend
+  createdBy: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', // Must match 'User' in User.js
+    required: true 
   },
-  start: {
-    type: Date,
-    required: true,
-  },
-  category: {
-    type: String,
-    enum: ['Academic', 'Exam', 'Batch'],
-    default: 'Academic',
-  },
-  backgroundColor: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('event', EventSchema);
+module.exports = mongoose.model('Event', EventSchema);
