@@ -18,7 +18,7 @@ const Discussion = () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
-      const res = await axios.get('http://localhost:5000/api/discussion', config);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/discussion`, config);
       setPosts(res.data);
       setLoading(false);
     } catch (err) {
@@ -35,7 +35,7 @@ const Discussion = () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
-      const res = await axios.post('http://localhost:5000/api/discussion', newPost, config);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/discussion`, newPost, config);
       setPosts([res.data, ...posts]);
       setShowModal(false);
       setNewPost({ title: '', content: '', category: 'General' });
@@ -46,7 +46,7 @@ const Discussion = () => {
     if(!window.confirm("Delete this post?")) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/discussion/${id}`, { headers: { 'x-auth-token': token } });
+      await axios.delete(`${process.env.REACT_APP_API_URL}/discussion/${id}`, { headers: { 'x-auth-token': token } });
       setPosts(posts.filter(p => p._id !== id));
     } catch (err) { alert("Failed to delete"); }
   };
@@ -163,7 +163,7 @@ const PostItem = ({ post, currentUser, onDelete }) => {
   const handleLike = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put(`http://localhost:5000/api/discussion/like/${post._id}`, {}, { headers: { 'x-auth-token': token } });
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/discussion/like/${post._id}`, {}, { headers: { 'x-auth-token': token } });
       setLikes(res.data);
     } catch (err) { console.error(err); }
   };
@@ -173,7 +173,7 @@ const PostItem = ({ post, currentUser, onDelete }) => {
     if(!commentText.trim()) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`http://localhost:5000/api/discussion/comment/${post._id}`, { text: commentText }, { headers: { 'x-auth-token': token } });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/discussion/comment/${post._id}`, { text: commentText }, { headers: { 'x-auth-token': token } });
       setComments(res.data);
       setCommentText('');
     } catch (err) { console.error(err); }
@@ -183,7 +183,7 @@ const PostItem = ({ post, currentUser, onDelete }) => {
     if(!window.confirm("Delete comment?")) return;
     try {
         const token = localStorage.getItem('token');
-        const res = await axios.delete(`http://localhost:5000/api/discussion/comment/${post._id}/${commentId}`, { headers: { 'x-auth-token': token } });
+        const res = await axios.delete(`${process.env.REACT_APP_API_URL}/discussion/comment/${post._id}/${commentId}`, { headers: { 'x-auth-token': token } });
         setComments(res.data);
     } catch (err) { console.error(err); }
   };
@@ -276,7 +276,7 @@ const CommentItem = ({ comment, postId, currentUser, onDelete, onReplySuccess })
     if(!replyText.trim()) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(`http://localhost:5000/api/discussion/comment/${postId}/${comment._id}/reply`, { text: replyText }, { headers: { 'x-auth-token': token } });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/discussion/comment/${postId}/${comment._id}/reply`, { text: replyText }, { headers: { 'x-auth-token': token } });
       onReplySuccess(res.data);
       setReplyText('');
       setShowReplyInput(false);
@@ -287,7 +287,7 @@ const CommentItem = ({ comment, postId, currentUser, onDelete, onReplySuccess })
     if(!window.confirm("Delete reply?")) return;
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.delete(`http://localhost:5000/api/discussion/comment/${postId}/${comment._id}/reply/${replyId}`, { headers: { 'x-auth-token': token } });
+      const res = await axios.delete(`${process.env.REACT_APP_API_URL}/discussion/comment/${postId}/${comment._id}/reply/${replyId}`, { headers: { 'x-auth-token': token } });
       onReplySuccess(res.data);
     } catch (err) { console.error(err); }
   };

@@ -56,10 +56,10 @@ const AcademicProgress = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
       
-      const res = await axios.get('http://localhost:5000/api/academic/progress', config);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/academic/progress`, config);
       setData(res.data);
       
-      const catalogRes = await axios.get('http://localhost:5000/api/academic/catalog', config);
+      const catalogRes = await axios.get(`${process.env.REACT_APP_API_URL}/academic/catalog`, config);
       setCourseCatalog(catalogRes.data);
 
       setLoading(false);
@@ -135,7 +135,7 @@ const AcademicProgress = () => {
         }))
       };
       
-      await axios.post('http://localhost:5000/api/academic/add-results-batch', payload, config);
+      await axios.post(`${process.env.REACT_APP_API_URL}/academic/add-results-batch`, payload, config);
       await fetchProgress(); 
       setShowAddModal(false);
       setPendingResults([]);
@@ -150,7 +150,7 @@ const AcademicProgress = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
       
-      await axios.delete(`http://localhost:5000/api/academic/result/${deleteModal.id}`, config);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/academic/result/${deleteModal.id}`, config);
       
       await fetchProgress(); 
       setDeleteModal({ show: false, id: null, code: '' }); 

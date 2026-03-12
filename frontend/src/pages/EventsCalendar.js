@@ -43,7 +43,7 @@ const EventsCalendar = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
 
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/events`, config);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/events`, config);
 
       const formattedEvents = res.data.map((event) => {
         // Handle name mapping safely
@@ -113,7 +113,7 @@ const EventsCalendar = () => {
         degree: newEvent.degree
       };
 
-      await axios.post('http://:/api/events', body, config);
+      await axios.post(`${process.env.REACT_APP_API_URL}/events`, body, config);
       await fetchEvents();
       setShowAddModal(false);
       setNewEvent({ title: '', start: '', type: 'Lecture', faculty: 'Engineering', degree: 'Software Engineering' });
@@ -132,7 +132,7 @@ const EventsCalendar = () => {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
 
-      await axios.delete(`http://:/api/events/${deleteModal.eventId}`, config);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/events/${deleteModal.eventId}`, config);
       
       setEvents(events.filter((e) => e.id !== deleteModal.eventId));
       setDeleteModal({ show: false, eventId: null, eventTitle: '' });
