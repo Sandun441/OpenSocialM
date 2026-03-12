@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
-import { User, Lock, Facebook, Moon, Sun } from 'lucide-react'; 
-
+import { User, Lock, Facebook, Moon, Sun, Eye, EyeOff } from 'lucide-react'; 
+ 
 export default function Login() {
   const [formData, setFormData] = useState({
     email: localStorage.getItem('rememberedEmail') || '',
@@ -11,6 +11,7 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
   
   // --- CAROUSEL STATE ---
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -180,16 +181,32 @@ export default function Login() {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
               </div>
+              
               <input
                 id="password"
                 name="password"
-                type="password"
+                // CHANGE 1: Make type dynamic
+                type={showPassword ? "text" : "password"} 
                 required
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
+                // CHANGE 2: Updated pr-4 to pr-12 to make room for the eye icon
+                className="w-full pl-11 pr-12 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
               />
+              
+              {/* CHANGE 3: Add the toggle button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
 
             <div className="text-left">
