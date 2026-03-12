@@ -12,7 +12,7 @@ const Post = ({ post, deletePost }) => {
 
   const handleLike = async () => {
     try {
-      const res = await axios.put(`/api/posts/like/${post._id}`);
+      const res = await axios.put(`/posts/like/${post._id}`);
       setLikes(res.data);
     } catch (err) {
       console.error(err.response?.data?.msg || 'Error liking post');
@@ -24,7 +24,7 @@ const Post = ({ post, deletePost }) => {
     if (!commentText.trim()) return;
 
     try {
-      const res = await axios.post(`/api/posts/comment/${post._id}`, {
+      const res = await axios.post(`/posts/comment/${post._id}`, {
         text: commentText
       });
       setComments(res.data);
