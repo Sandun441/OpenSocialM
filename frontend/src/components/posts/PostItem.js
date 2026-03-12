@@ -37,7 +37,7 @@ const PostItem = ({ post, deletePost }) => {
     e.preventDefault();
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      const res = await axios.post(`/posts/comment/${post._id}`, { text: commentText }, config);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts/comment/${post._id}`, { text: commentText }, config);
       setComments(res.data);
       setCommentText('');
     } catch (err) {

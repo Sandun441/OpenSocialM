@@ -10,9 +10,9 @@ const PostForm = ({ faculty, addPost }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    
     try {
-      const res = await axios.post('/api/posts', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, {
         text,
         faculty
       });
