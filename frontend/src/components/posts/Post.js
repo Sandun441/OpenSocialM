@@ -24,7 +24,7 @@ const Post = ({ post, deletePost }) => {
     if (!commentText.trim()) return;
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts/comment/${post._id}`, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts/comment/${post._id}`, {
         text: commentText
       });
       setComments(res.data);
