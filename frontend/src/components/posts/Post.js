@@ -12,7 +12,7 @@ const Post = ({ post, deletePost }) => {
 
   const handleLike = async () => {
     try {
-      const res = await axios.put(`/posts/like/${post._id}`);
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/posts/like/${post._id}`);
       setLikes(res.data);
     } catch (err) {
       console.error(err.response?.data?.msg || 'Error liking post');
