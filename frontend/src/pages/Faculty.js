@@ -16,7 +16,7 @@ const Faculty = () => {
     const fetchPosts = async () => {
       try {
         const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-        const res = await axios.get(`http://localhost:/api/posts/faculty/${facultyName}`, config);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/faculty/${facultyName}`, config);
         setPosts(res.data);
         setLoading(false);
       } catch (err) {
