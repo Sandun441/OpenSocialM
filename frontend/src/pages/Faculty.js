@@ -17,7 +17,7 @@ const Faculty = () => {
     const fetchPosts = async () => {
       try {
         const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-        const res = await api.get(`/api/posts/faculty/${facultyName}`, config);
+        const res = await api.get(`/posts/faculty/${facultyName}`, config);
         setPosts(res.data);
         setLoading(false);
       } catch (err) {
