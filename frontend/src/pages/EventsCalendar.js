@@ -40,6 +40,7 @@ const EventsCalendar = () => {
 
   // --- 1. FETCH EVENTS ---
   const fetchEvents = useCallback(async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
@@ -74,6 +75,9 @@ const EventsCalendar = () => {
       setEvents(formattedEvents);
     } catch (err) {
       console.error('Error fetching events:', err.message);
+    }
+    finally {
+      setIsLoading(false); // ✅ 2. TELL THE APP TO STOP LOADING (Even if there's an error)
     }
   }, []);
 
@@ -224,7 +228,7 @@ const EventsCalendar = () => {
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto custom-scrollbar pr-2">
-            {/* 1. LOADING STATE (SKELETONS) */}
+           {/* 1. LOADING STATE (SKELETONS) */}
             {isLoading && ( // <--- CHANGE THE '?' TO '&&' HERE
               <>
                 {[1, 2, 3].map((n) => (
@@ -247,6 +251,7 @@ const EventsCalendar = () => {
                 ))}
               </>
             )}
+
             {/* 2. LOADED STATE (ACTUAL EVENTS) */}
             {!isLoading && filteredEvents.length > 0 && (
               filteredEvents.map((event) => (
