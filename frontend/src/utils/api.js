@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Set the base URL for all API requests
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'https://opensocialm.onrender.com';
 
 // Add a request interceptor to add the auth token to all requests
 axios.interceptors.request.use(
