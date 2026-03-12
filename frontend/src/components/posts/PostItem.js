@@ -13,7 +13,7 @@ const PostItem = ({ post, deletePost }) => {
   const handleLike = async () => {
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      const res = await axios.put(`/posts/like/${post._id}`, {}, config);
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/posts/like/${post._id}`, {}, config);
       setLikes(res.data);
     } catch (err) {
       console.error("Error liking post", err);
@@ -25,7 +25,7 @@ const PostItem = ({ post, deletePost }) => {
     if (!window.confirm("Are you sure?")) return;
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      await axios.delete(`/posts/${post._id}`, config);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/posts/${post._id}`, config);
       deletePost(post._id);
     } catch (err) {
       console.error("Error deleting", err);
