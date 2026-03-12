@@ -40,7 +40,6 @@ const EventsCalendar = () => {
 
   // --- 1. FETCH EVENTS ---
   const fetchEvents = useCallback(async () => {
-    setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
@@ -72,11 +71,9 @@ const EventsCalendar = () => {
         };
       });
 
-    setEvents(formattedEvents);
+      setEvents(formattedEvents);
     } catch (err) {
       console.error('Error fetching events:', err.message);
-    } finally {
-      setIsLoading(false); 
     }
   }, []);
 
@@ -227,7 +224,31 @@ const EventsCalendar = () => {
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto custom-scrollbar pr-2">
-            {filteredEvents.length > 0 ? (
+            {/* 1. LOADING STATE (SKELETONS) */}
+            {isLoading && ( // <--- CHANGE THE '?' TO '&&' HERE
+              <>
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="flex items-center p-3 border-b border-gray-100 dark:border-gray-700 animate-pulse">
+                    {/* Date Skeleton */}
+                    <div className="w-12 text-center mr-4 flex flex-col items-center gap-1.5">
+                      <div className="h-2.5 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                      <div className="h-5 w-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    </div>
+                    {/* Title & Badge Skeleton */}
+                    <div className="flex-1">
+                      <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                      <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                    </div>
+                    {/* Days Left Skeleton */}
+                    <div className="ml-4 flex justify-end">
+                      <div className="h-3 w-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+            {/* 2. LOADED STATE (ACTUAL EVENTS) */}
+            {!isLoading && filteredEvents.length > 0 && (
               filteredEvents.map((event) => (
                 <div key={event.id} 
                   onClick={() => setSelectedEvent({ ...event, ...event.extendedProps, start: event.start })} 
@@ -255,7 +276,10 @@ const EventsCalendar = () => {
                   </div>
                 </div>
               ))
-            ) : (
+            )}
+
+            {/* 3. EMPTY STATE */}
+            {!isLoading && filteredEvents.length === 0 && (
               <div className="text-center py-8 text-gray-400">No events found matching your criteria.</div>
             )}
           </div>
