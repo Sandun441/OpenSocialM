@@ -10,6 +10,7 @@ import { Trash2, X, CheckCircle, AlertCircle, Calendar as CalendarIcon } from 'l
 const EventsCalendar = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('30');
   const [searchTerm, setSearchTerm] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -39,6 +40,7 @@ const EventsCalendar = () => {
 
   // --- 1. FETCH EVENTS ---
   const fetchEvents = useCallback(async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { 'x-auth-token': token } };
@@ -70,9 +72,11 @@ const EventsCalendar = () => {
         };
       });
 
-      setEvents(formattedEvents);
+    setEvents(formattedEvents);
     } catch (err) {
       console.error('Error fetching events:', err.message);
+    } finally {
+      setIsLoading(false); 
     }
   }, []);
 
