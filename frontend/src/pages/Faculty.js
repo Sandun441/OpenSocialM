@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-
-import api from '../utils/api';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import PostForm from '../components/posts/PostForm';
 import PostItem from '../components/posts/PostItem';
 import { AuthContext } from '../context/authContext';
@@ -17,7 +16,7 @@ const Faculty = () => {
     const fetchPosts = async () => {
       try {
         const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-        const res = await api.get(`/posts/faculty/${facultyName}`, config);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts/faculty/${facultyName}`, config);
         setPosts(res.data);
         setLoading(false);
       } catch (err) {
