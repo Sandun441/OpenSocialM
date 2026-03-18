@@ -210,9 +210,9 @@ export default function Login() {
             </div>
 
             <div className="text-left">
-              <a href="#" className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors uppercase tracking-wider">
+              <Link to="/forgot-password" className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors uppercase tracking-wider">
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
             <button

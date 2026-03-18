@@ -6,7 +6,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js"
-    
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.17.0",
     "mongoose": "^8.20.3",
+    "nodemailer": "^8.0.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "validator": "^13.15.0"
