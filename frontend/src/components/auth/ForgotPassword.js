@@ -8,17 +8,17 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // --- THEME STATE ---
   const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('theme') === 'dark' || 
+    localStorage.getItem('theme') === 'dark' ||
     (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
   );
 
@@ -42,7 +42,7 @@ export default function ForgotPassword() {
     setSuccess('');
 
     try {
-      const res = await fetch('/api/auth/forgotpassword', {
+      const res = await fetch('https://opensocialm.onrender.com/api/auth/forgotpassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -65,7 +65,7 @@ export default function ForgotPassword() {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -81,7 +81,7 @@ export default function ForgotPassword() {
     setSuccess('');
 
     try {
-      const res = await fetch('/api/auth/resetpassword', {
+      const res = await fetch('https://opensocialm.onrender.com/api/auth/forgotpassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, newPassword })
@@ -106,9 +106,9 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 relative font-['Lato']">
-      
+
       {/* THEME TOGGLE BUTTON */}
-      <button 
+      <button
         onClick={() => setDarkMode(!darkMode)}
         className="absolute top-6 right-6 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg text-slate-600 dark:text-yellow-400 transition-all transform hover:scale-110 z-50"
       >
@@ -117,9 +117,9 @@ export default function ForgotPassword() {
 
       {/* MAIN CARD */}
       <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl overflow-hidden flex w-full max-w-[500px] min-h-[500px] transition-colors duration-300">
-        
+
         <div className="w-full bg-white dark:bg-slate-800 p-8 md:p-12 flex flex-col justify-center transition-colors duration-300 relative">
-          
+
           <Link to="/login" className="absolute top-8 left-8 text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors flex items-center text-sm font-bold uppercase tracking-wider">
             <ArrowLeft size={16} className="mr-1" /> Back
           </Link>
@@ -140,9 +140,9 @@ export default function ForgotPassword() {
           )}
 
           {success && (
-             <div className="mb-4 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 text-sm text-center border border-green-100 dark:border-green-800">
+            <div className="mb-4 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 text-sm text-center border border-green-100 dark:border-green-800">
               {success}
-             </div>
+            </div>
           )}
 
           {step === 1 ? (
@@ -196,7 +196,7 @@ export default function ForgotPassword() {
                   <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
                 </div>
                 <input
-                  type={showNewPassword ? "text" : "password"} 
+                  type={showNewPassword ? "text" : "password"}
                   required
                   placeholder="New Password"
                   value={newPassword}
@@ -218,7 +218,7 @@ export default function ForgotPassword() {
                   <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
                 </div>
                 <input
-                  type={showConfirmPassword ? "text" : "password"} 
+                  type={showConfirmPassword ? "text" : "password"}
                   required
                   placeholder="Confirm New Password"
                   value={confirmPassword}
