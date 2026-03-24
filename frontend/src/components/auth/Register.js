@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { User, Mail, Lock, BookOpen, Calendar } from 'lucide-react'; 
 
 const degreeProgramMap = {
   'Engineering Technology': [
@@ -59,6 +60,7 @@ const Register = () => {
     lastName: '',
     email: '',
     password: '',
+    confirmPassword: '', 
     registrationNumber: '',
     faculty: '',
     degreeProgram: '',
@@ -66,18 +68,28 @@ const Register = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [localError, setLocalError] = useState('');
 
   const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (error) clearErrors();
+    if (localError) setLocalError('');
   };
 
   const onSubmit = async e => {
     e.preventDefault();
     clearErrors();
+    setLocalError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setLocalError("Passwords do not match");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const success = await register(formData);
+      const { confirmPassword, ...dataToSend } = formData;
+      const success = await register(dataToSend);
       if (success) navigate('/dashboard');
     } finally {
       setIsLoading(false);
@@ -85,223 +97,199 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-          Create your OUSL Social account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-          Please verify your university details
-        </p>
-      </div>
+    // 1. BACKGROUND
+    <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 font-['Lato'] py-12">
+      
+      {/* 2. MAIN CARD */}
+      <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl w-full max-w-2xl p-8 md:p-12 transform transition-all hover:shadow-3xl">
+        
+        {/* HEADER */}
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white mb-3 tracking-tight">
+            Create Account
+          </h2>
+          <p className="text-gray-400 dark:text-gray-400 text-sm font-medium tracking-wide uppercase">
+            Join the University Community
+          </p>
+        </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {error && (
-            <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-700 p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
+        {/* ERROR MESSAGE */}
+        {(error || localError) && (
+          <div className="mb-6 p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-300 text-sm text-center border border-red-100 dark:border-red-800 animate-pulse font-medium">
+            {error || localError}
+          </div>
+        )}
+        
+        <form className="space-y-6" onSubmit={onSubmit}>
           
-          <form className="space-y-6" onSubmit={onSubmit}>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  First name
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    value={formData.firstName}
-                    onChange={onChange}
-                    required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
+          {/* NAME FIELDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative group">
+               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
               </div>
-
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Last name
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    value={formData.lastName}
-                    onChange={onChange}
-                    required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
+              <input
+                name="firstName"
+                type="text"
+                required
+                placeholder="First Name"
+                value={formData.firstName}
+                onChange={onChange}
+                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+              />
             </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  value={formData.email}
-                  onChange={onChange}
-                  required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
+            <div className="relative group">
+               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
               </div>
+              <input
+                name="lastName"
+                type="text"
+                required
+                placeholder="Last Name"
+                value={formData.lastName}
+                onChange={onChange}
+                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+              />
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={formData.password}
-                  onChange={onChange}
-                  required
-                  minLength={6}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
+          {/* EMAIL */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
             </div>
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={onChange}
+              className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+            />
+          </div>
 
-            <div>
-              <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                OUSL Registration Number
-              </label>
-              <div className="mt-1">
-                <input
-                  id="registrationNumber"
-                  name="registrationNumber"
-                  type="text"
-                  value={formData.registrationNumber}
-                  onChange={onChange}
-                  required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
+          {/* REGISTRATION NUMBER */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <BookOpen className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
             </div>
+            <input
+              name="registrationNumber"
+              type="text"
+              required
+              placeholder="Student Registration Number"
+              value={formData.registrationNumber}
+              onChange={onChange}
+              className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+            />
+          </div>
 
-            <div>
-              <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Faculty</label>
+          {/* FACULTY & DEGREE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative group">
               <select
-                id="faculty"
                 name="faculty"
                 value={formData.faculty}
                 onChange={onChange}
                 required
-                className=" mt-1 block w-full px-3 py-2 rounded-md placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
+                className="w-full px-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all font-medium appearance-none cursor-pointer"
               >
-                <option value="">Select your faculty</option>
-                {faculties.map(fac => (
-                  <option key={fac} value={fac}>{fac}</option>
+                <option value="">Select Faculty</option>
+                {faculties.map(fac => <option key={fac} value={fac}>{fac}</option>)}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">▼</div>
+            </div>
+
+            <div className="relative group">
+              <select
+                name="degreeProgram"
+                value={formData.degreeProgram}
+                onChange={onChange}
+                required
+                disabled={!formData.faculty}
+                className={`w-full px-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all font-medium appearance-none cursor-pointer ${!formData.faculty ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <option value="">Select Degree</option>
+                {formData.faculty && degreeProgramMap[formData.faculty]?.map(deg => (
+                  <option key={deg} value={deg}>{deg}</option>
                 ))}
               </select>
-            </div>
-
-            {formData.faculty && (
-              <div>
-                <label htmlFor="degreeProgram" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Degree Program</label>
-                <select
-                  id="degreeProgram"
-                  name="degreeProgram"
-                  value={formData.degreeProgram}
-                  onChange={onChange}
-                  required
-                  className=" mt-1 block w-full px-3 py-2 rounded-md placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600"
-                >
-                  <option value="">Select your degree program</option>
-                  {degreeProgramMap[formData.faculty]?.map(deg => (
-                    <option key={deg} value={deg}>{deg}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="batch" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Batch Year (e.g., 2022)
-              </label>
-              <div className="mt-1">
-                <input
-                  id="batch"
-                  name="batch"
-                  type="number"
-                  min="2000"
-                  max={new Date().getFullYear()}
-                  value={formData.batch}
-                  onChange={onChange}
-                  required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Registering...
-                  </>
-                ) : 'Register'}
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-700" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                  Already have an account?
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Login
-              </button>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">▼</div>
             </div>
           </div>
+
+          {/* BATCH YEAR */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Calendar className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
+            </div>
+            <input
+              name="batch"
+              type="number"
+              min="2000"
+              max={new Date().getFullYear()}
+              required
+              placeholder="Batch Year (e.g. 2024)"
+              value={formData.batch}
+              onChange={onChange}
+              className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+            />
+          </div>
+
+          {/* PASSWORD FIELDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
+              </div>
+              <input
+                name="password"
+                type="password"
+                required
+                minLength={6}
+                placeholder="Password"
+                value={formData.password}
+                onChange={onChange}
+                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+              />
+            </div>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
+              </div>
+              <input
+                name="confirmPassword"
+                type="password"
+                required
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={onChange}
+                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-[#1A237E] hover:bg-[#151b60] text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5 active:scale-95 tracking-wide text-sm mt-4"
+          >
+            {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
+          </button>
+        </form>
+
+        <div className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500 font-medium">
+          Already have an account? 
+          <Link to="/login" className="font-bold text-[#1A237E] dark:text-blue-400 hover:underline ml-1 tracking-wide">
+            LOGIN HERE
+          </Link>
         </div>
+
       </div>
     </div>
   );
 };
-//confirm pasword field
+
 export default Register;

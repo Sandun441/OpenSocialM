@@ -107,71 +107,84 @@ const Profile = () => {
   };
 
   return (
-    // 1. FULL PAGE WRAPPER (Handles Dark Mode Background)
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-200 py-8">
+    // 1. FULL PAGE WRAPPER & FONT: Lato font and global background
+    <div className="min-h-screen w-full bg-[#F5F7FA] dark:bg-slate-900 transition-colors duration-300 py-12 font-['Lato']">
       
-      <div className="max-w-5xl mx-auto px-4 animate-fade-in">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 animate-fade-in-up">
         
         {/* CARD CONTAINER */}
-        <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+        <div className="bg-white dark:bg-slate-800 shadow-sm hover:shadow-xl transition-shadow duration-300 rounded-[24px] overflow-hidden border border-slate-100 dark:border-slate-700">
           
           {/* COVER PHOTO */}
-          <div className="relative h-56 bg-gray-200 dark:bg-gray-700">
+          <div className="relative h-64 bg-slate-200 dark:bg-slate-700">
             <img 
-              src={coverPreview || 'https://images.unsplash.com/photo-1557683316-973673baf926'} 
+              src={coverPreview || 'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80'} 
               className="w-full h-full object-cover" alt="Cover"
             />
             {isEditing && (
-              <button onClick={() => coverInputRef.current.click()} className="absolute top-4 right-4 p-3 bg-black/60 rounded-full text-white hover:bg-black/80 shadow-lg transition">
+              <button onClick={() => coverInputRef.current.click()} className="absolute top-4 right-4 p-3 bg-black/60 backdrop-blur-sm rounded-full text-white hover:bg-black/80 shadow-lg transition-all hover:scale-105">
                 <Camera className="w-5 h-5" />
               </button>
             )}
             <input type="file" ref={coverInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'cover')} />
           </div>
 
-          {/* PROFILE HEADER */}
-          <div className="relative px-8 pb-8">
-            <div className="flex flex-col md:flex-row items-end -mt-20 md:space-x-6">
-              <div className="relative group">
+          {/* PROFILE HEADER (Adjusted Layout) */}
+          <div className="px-8 pb-10">
+            
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6">
+              {/* AVATAR (Pulled up using negative margin) */}
+              <div className="relative group -mt-20 z-10">
                 <img
-                  className="w-40 h-40 rounded-3xl border-8 border-white dark:border-gray-800 object-cover bg-white dark:bg-gray-800 shadow-xl"
-                  src={avatarPreview || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=4f46e5&color=fff&size=200`}
+                  className="w-40 h-40 rounded-[24px] border-[6px] border-white dark:border-slate-800 object-cover bg-white dark:bg-slate-800 shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
+                  src={avatarPreview || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=1A237E&color=fff&size=200`}
                   alt="Avatar"
                 />
                 {isEditing && (
-                  <button onClick={() => avatarInputRef.current.click()} className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-300">
+                  <button onClick={() => avatarInputRef.current.click()} className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-[24px] opacity-0 group-hover:opacity-100 transition-all duration-300 border-[6px] border-transparent">
                     <Camera className="text-white w-10 h-10" />
                   </button>
                 )}
                 <input type="file" ref={avatarInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageChange(e, 'avatar')} />
               </div>
-              
-              <div className="mt-6 md:mt-0 flex-grow pb-2">
-                <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">{user?.firstName} {user?.lastName}</h1>
-                <p className="flex items-center text-indigo-600 dark:text-indigo-400 font-bold text-lg mt-1">
-                  <School className="w-5 h-5 mr-2" /> {user?.degreeProgram || 'OUSL Student'}
-                </p>
-              </div>
 
+              {/* EDIT BUTTON (Positioned to the right on desktop) */}
               {!isEditing && (
-                <button onClick={() => setIsEditing(true)} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition shadow-lg active:scale-95">
-                  Edit Profile
-                </button>
+                <div className="mt-6 md:mt-0 w-full md:w-auto flex justify-center md:justify-end">
+                  <button onClick={() => setIsEditing(true)} className="w-full md:w-auto bg-[#1A237E] hover:bg-[#151b60] text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20 active:scale-95 tracking-wide text-sm">
+                    EDIT PROFILE
+                  </button>
+                </div>
               )}
             </div>
+            
+            {/* NAME & DEGREE (Pushed down below the avatar) */}
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl md:text-5xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white tracking-tight mb-2">
+                {user?.firstName} {user?.lastName}
+              </h1>
+              <p className="flex items-center justify-center md:justify-start text-slate-500 dark:text-slate-400 font-medium text-lg tracking-wide">
+                <School className="w-5 h-5 mr-2 text-[#1A237E] dark:text-indigo-400" /> 
+                {user?.degreeProgram || 'University Student'}
+              </p>
+            </div>
+            
           </div>
 
-          {/* CONTENT */}
-          <div className="p-8 border-t border-gray-50 dark:border-gray-700">
+          {/* CONTENT AREA */}
+          <div className="p-8 md:p-10 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+            
+            {/* ALERT MESSAGE */}
             {message.text && (
-              <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'}`}>
+              <div className={`mb-8 p-4 rounded-xl flex items-center gap-3 font-medium ${message.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800/50' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-100 dark:border-red-800/50'}`}>
                 {message.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                <span className="font-medium">{message.text}</span>
+                <span>{message.text}</span>
               </div>
             )}
 
             {isEditing ? (
-              <form onSubmit={handleSubmit} className="space-y-8">
+              // --- EDIT MODE FORM ---
+              <form onSubmit={handleSubmit} className="space-y-8 animate-fade-in-up">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
                   <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
@@ -181,39 +194,53 @@ const Profile = () => {
                 </div>
 
                 {/* SOCIAL LINKS INPUTS */}
-                <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-3xl space-y-4 border border-gray-100 dark:border-gray-600">
-                  <h3 className="text-xs font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest">Connect Links</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-slate-50 dark:bg-slate-700/50 p-6 md:p-8 rounded-[24px] space-y-5 border border-slate-100 dark:border-slate-600">
+                  <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-widest">Connect Links</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <SocialInput icon={<Facebook size={18}/>} label="Facebook URL" value={links.facebook} onChange={(val) => setLinks({...links, facebook: val})} />
                     <SocialInput icon={<Instagram size={18}/>} label="Insta Username" value={links.instagram} onChange={(val) => setLinks({...links, instagram: val})} />
                     <SocialInput icon={<MessageCircle size={18}/>} label="WhatsApp Number" value={links.whatsapp} onChange={(val) => setLinks({...links, whatsapp: val})} placeholder="e.g. 94771234567" />
                   </div>
                 </div>
                 
-                <textarea 
-                  name="bio" rows={4} value={formData.bio} onChange={handleChange} 
-                  className="w-full p-4 rounded-2xl border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
-                  placeholder="Write your bio..."
-                />
+                {/* BIO INPUT */}
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Biography</label>
+                  <textarea 
+                    name="bio" rows={4} value={formData.bio} onChange={handleChange} 
+                    className="w-full p-5 rounded-xl border border-slate-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-[#1A237E] focus:border-transparent transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 font-medium leading-relaxed resize-none" 
+                    placeholder="Tell the community a little bit about yourself..."
+                  />
+                </div>
 
-                <div className="flex justify-end gap-4">
-                  <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-2 text-gray-400 dark:text-gray-300 font-bold hover:text-gray-600 dark:hover:text-white">Cancel</button>
-                  <button type="submit" disabled={isLoading} className="bg-indigo-600 text-white px-10 py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2 hover:bg-indigo-700 transition">
-                    {isLoading && <Loader2 className="w-5 h-5 animate-spin" />} Save Profile
+                {/* ACTION BUTTONS */}
+                <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-3.5 text-slate-500 dark:text-slate-400 font-bold hover:text-slate-800 dark:hover:text-white transition-colors text-sm tracking-wide">
+                    CANCEL
+                  </button>
+                  <button type="submit" disabled={isLoading} className="bg-[#1A237E] hover:bg-[#151b60] text-white px-10 py-3.5 rounded-xl font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2 transition-all active:scale-95 text-sm tracking-wide disabled:opacity-70">
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null} 
+                    {isLoading ? 'SAVING...' : 'SAVE PROFILE'}
                   </button>
                 </div>
               </form>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                 <div className="md:col-span-1 space-y-8">
-                    <DetailItem icon={<Mail/>} label="Email" value={user?.email} />
+              // --- VIEW MODE ---
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in-up">
+                 {/* Details Column */}
+                 <div className="lg:col-span-1 space-y-8 bg-slate-50 dark:bg-slate-700/30 p-8 rounded-[24px] border border-slate-100 dark:border-slate-700/50">
+                    <DetailItem icon={<Mail/>} label="Email Address" value={user?.email} />
                     <DetailItem icon={<BookOpen/>} label="Faculty" value={user?.faculty} />
-                    <DetailItem icon={<Users/>} label="Batch" value={user?.batch} />
+                    <DetailItem icon={<Users/>} label="Batch Year" value={user?.batch} />
                  </div>
-                 <div className="md:col-span-2">
-                    <div className="bg-gray-50/50 dark:bg-gray-700/50 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 h-full">
-                      <h3 className="text-sm font-black text-gray-400 dark:text-gray-300 uppercase tracking-widest mb-4">Biography</h3>
-                      <p className="text-gray-700 dark:text-gray-300 text-lg italic whitespace-pre-wrap">{user?.bio || "No bio added yet."}</p>
+                 
+                 {/* Bio Column */}
+                 <div className="lg:col-span-2">
+                    <div className="bg-white dark:bg-slate-800 h-full">
+                      <h3 className="text-2xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white mb-4 tracking-tight">Biography</h3>
+                      <p className="text-slate-600 dark:text-slate-300 text-base leading-loose font-medium whitespace-pre-wrap">
+                        {user?.bio || <span className="text-slate-400 italic font-light">This user hasn't added a biography yet.</span>}
+                      </p>
                     </div>
                  </div>
               </div>
@@ -225,29 +252,31 @@ const Profile = () => {
   );
 };
 
-// HELPER COMPONENTS (Updated with Dark Mode classes)
+// --- HELPER COMPONENTS ---
 const InputField = ({ label, name, value, onChange }) => (
   <div>
-    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{label}</label>
+    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{label}</label>
     <input 
       type="text" 
       name={name} 
       value={value} 
       onChange={onChange} 
-      className="w-full px-5 py-3 rounded-2xl border border-gray-200 dark:border-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors" 
+      className="w-full px-5 py-4 rounded-xl border border-slate-200 dark:border-slate-600 outline-none focus:ring-2 focus:ring-[#1A237E] focus:border-transparent bg-white dark:bg-slate-700 text-slate-900 dark:text-white transition-all font-medium" 
     />
   </div>
 );
 
 const SocialInput = ({ icon, label, value, onChange, placeholder }) => (
   <div className="relative">
-    <label className="block text-[10px] font-black text-gray-400 dark:text-gray-300 uppercase mb-1">{label}</label>
-    <div className="relative">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300">{icon}</div>
+    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{label}</label>
+    <div className="relative group">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 group-focus-within:text-[#1A237E] dark:group-focus-within:text-indigo-400 transition-colors">
+        {icon}
+      </div>
       <input 
         type="text" value={value} placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)} 
-        className="w-full pl-11 pr-4 py-2 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-900 dark:text-white transition-colors" 
+        className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-600 rounded-xl border border-slate-200 dark:border-slate-500 focus:border-transparent focus:ring-2 focus:ring-[#1A237E] outline-none text-slate-900 dark:text-white transition-all font-medium placeholder-slate-400" 
       />
     </div>
   </div>
@@ -255,10 +284,12 @@ const SocialInput = ({ icon, label, value, onChange, placeholder }) => (
 
 const DetailItem = ({ icon, label, value }) => (
   <div className="flex items-start space-x-4">
-    <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl text-indigo-600 dark:text-indigo-400">{icon}</div>
+    <div className="p-3.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl text-[#1A237E] dark:text-indigo-400 shadow-inner">
+      {icon}
+    </div>
     <div>
-      <p className="text-xs text-gray-400 dark:text-gray-500 font-black uppercase mb-1 tracking-widest">{label}</p>
-      <p className="text-gray-900 dark:text-white font-bold text-lg">{value || '---'}</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase mb-1 tracking-widest">{label}</p>
+      <p className="text-slate-900 dark:text-white font-bold text-lg">{value || '---'}</p>
     </div>
   </div>
 );
