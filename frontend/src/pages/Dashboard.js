@@ -7,86 +7,113 @@ import {
   GraduationCap,
   Users,
   MessageSquare,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8 flex flex-col">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-        <div>
-          <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white mb-2">
-            Welcome back, {user?.firstName} 👋
-          </h1>
-        </div>
+    // 1. BACKGROUND & FONT: Clean background with the elegant Lato font
+    <div className="min-h-screen bg-[#F5F7FA] dark:bg-slate-900 p-6 md:p-12 flex flex-col font-['Lato'] transition-colors duration-300">
+      
+      {/* 2. HEADER SECTION */}
+      <div className="mb-10 mt-2">
+        <h1 className="text-4xl md:text-5xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white mb-3 tracking-tight">
+          Welcome back, {user?.firstName} 👋
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400 text-lg font-medium">
+          Manage your academics and connect with your community.
+        </p>
       </div>
 
-      {/* Dashboard Grid Section */}
-      <section className="flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-4">
+      {/* 3. DASHBOARD GRID */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        
         <DashboardCard
           title="My Profile"
           description="Update your account and view your details"
           to="/profile"
-          icon={<User className="w-10 h-10 text-blue-500" />}
+          // Icon Box Color: Soft Blue
+          iconBg="bg-blue-50 dark:bg-blue-900/20"
+          icon={<User className="w-8 h-8 text-blue-600 dark:text-blue-400" />}
         />
+        
         <DashboardCard
-          title="Faculty"
-          description="Explore your faculty's announcements and events"
+          title="My Faculty"
+          description="Explore announcements and faculty events"
           to={`/faculty/${user?.faculty}`}
-          icon={<GraduationCap className="w-10 h-10 text-green-500" />}
+          // Icon Box Color: Soft Emerald
+          iconBg="bg-emerald-50 dark:bg-emerald-900/20"
+          icon={<GraduationCap className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />}
         />
+        
         <DashboardCard
           title="Batch Community"
-          description="Chat with students from your batch"
+          description="Chat and collaborate with your batch"
           to="/batch"
-          icon={<Users className="w-10 h-10 text-purple-500" />}
+          // Icon Box Color: Soft Purple
+          iconBg="bg-purple-50 dark:bg-purple-900/20"
+          icon={<Users className="w-8 h-8 text-purple-600 dark:text-purple-400" />}
         />
+        
         <DashboardCard
           title="Events & Calendar"
           description="View upcoming academic and university events"
-          to="/Events"
-          icon={<CalendarDays className="w-10 h-10 text-pink-500" />}
+          to="/events"
+          // Icon Box Color: Soft Pink
+          iconBg="bg-pink-50 dark:bg-pink-900/20"
+          icon={<CalendarDays className="w-8 h-8 text-pink-600 dark:text-pink-400" />}
         />
+        
         <DashboardCard
           title="Discussion Forum"
           description="Ask questions and help others in the community"
-          to="/Discussion"
-          icon={<MessageSquare className="w-10 h-10 text-yellow-500" />}
+          to="/discussion"
+          // Icon Box Color: Soft Amber
+          iconBg="bg-amber-50 dark:bg-amber-900/20"
+          icon={<MessageSquare className="w-8 h-8 text-amber-600 dark:text-amber-400" />}
         />
+        
         <DashboardCard
           title="Academic Progress"
           description="Track your course completion and grades"
           to="/academicprogress"
-          icon={<GraduationCap className="w-10 h-10 text-indigo-500" />}
+          // Icon Box Color: Soft Indigo
+          iconBg="bg-indigo-50 dark:bg-indigo-900/20"
+          icon={<TrendingUp className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />}
         />
+        
       </section>
     </div>
   );
 }
 
-function DashboardCard({ title, description, to, icon }) {
+// --- ELEGANT CARD COMPONENT ---
+function DashboardCard({ title, description, to, icon, iconBg }) {
   const navigate = useNavigate();
+  
   return (
     <div
       onClick={() => navigate(to)}
-      // I have added dark:hover:from-gray-700 and dark:hover:to-gray-800 below
-      className="h-full cursor-pointer bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-8 rounded-2xl shadow-lg 
-                 hover:shadow-xl hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700 dark:hover:to-gray-800
-                 transition transform hover:-translate-y-1 hover:scale-105 duration-300
-                 flex flex-col items-center justify-center text-center"
+      className="group bg-white dark:bg-slate-800 rounded-[24px] p-8 shadow-sm border border-slate-100 dark:border-slate-700
+                 cursor-pointer transition-all duration-300 
+                 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1"
     >
-      {/* 1. Icon Container: flex + justify-center makes the SVG center itself */}
-      <div className="mb-4 flex justify-center w-full">{icon}</div>
+      <div className="flex items-start justify-between mb-6">
+        {/* Icon with Circle Background */}
+        <div className={`p-4 rounded-2xl ${iconBg} transition-transform duration-300 group-hover:scale-110`}>
+          {icon}
+        </div>
+      </div>
 
-      {/* 2. Title: No 'ml-4' here, just the text */}
-      <h2 className="text-2xl font-semibold mb-2 w-full dark:text-white">
+      {/* Title */}
+      <h3 className="text-xl font-bold font-['Playfair_Display'] text-slate-800 dark:text-white mb-2 group-hover:text-[#1A237E] dark:group-hover:text-indigo-400 transition-colors">
         {title}
-      </h2>
+      </h3>
 
-      {/* 3. Description */}
-      <p className="text-base text-gray-600 dark:text-gray-300 max-w-xs">
+      {/* Description */}
+      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
         {description}
       </p>
     </div>

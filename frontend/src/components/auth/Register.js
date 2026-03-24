@@ -97,10 +97,10 @@ const Register = () => {
   };
 
   return (
-    // 1. BACKGROUND: Added 'dark:bg-slate-900'
+    // 1. BACKGROUND
     <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 font-['Lato'] py-12">
       
-      {/* 2. MAIN CARD: Added 'dark:bg-slate-800' */}
+      {/* 2. MAIN CARD */}
       <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl w-full max-w-2xl p-8 md:p-12 transform transition-all hover:shadow-3xl">
         
         {/* HEADER */}
@@ -109,7 +109,7 @@ const Register = () => {
             Create Account
           </h2>
           <p className="text-gray-400 dark:text-gray-400 text-sm font-medium tracking-wide uppercase">
-            Join the OUSL Community
+            Join the University Community
           </p>
         </div>
 
@@ -170,7 +170,7 @@ const Register = () => {
             />
           </div>
 
-          {/* OUSL REG NO */}
+          {/* REGISTRATION NUMBER */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <BookOpen className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
@@ -179,7 +179,7 @@ const Register = () => {
               name="registrationNumber"
               type="text"
               required
-              placeholder="OUSL Registration Number"
+              placeholder="Student Registration Number"
               value={formData.registrationNumber}
               onChange={onChange}
               className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-800 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium"

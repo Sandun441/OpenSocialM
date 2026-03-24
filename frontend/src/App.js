@@ -15,7 +15,9 @@ import UserProfile from './pages/UserProfile';
 import EventsCalendar from './pages/EventsCalendar';
 import Discussion from './pages/Discussion';
 import AcademicProgress from './pages/AcademicProgress';
-import { ThemeProvider } from './context/ThemeContext';
+import ThemeProvider from './context/ThemeContext';
+import ForgotPassword from './components/auth/ForgotPassword';
+
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/chat/:id" element={<Chat />} />
             <Route path="/profile/:id" element={<UserProfile />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>

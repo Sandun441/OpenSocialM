@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
-import { User, Lock, Moon, Sun, Eye, EyeOff } from 'lucide-react'; 
- 
+import { User, Lock, Moon, Sun } from 'lucide-react'; 
+
 export default function Login() {
   const [formData, setFormData] = useState({
     email: localStorage.getItem('rememberedEmail') || '',
@@ -11,7 +11,6 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false)
   
   // --- CAROUSEL STATE ---
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -90,7 +89,6 @@ export default function Login() {
   };
 
   return (
-    // 1. BACKGROUND (Added Global Font Family 'Lato')
     <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 relative font-['Lato']">
       
       {/* THEME TOGGLE BUTTON */}
@@ -101,15 +99,13 @@ export default function Login() {
         {darkMode ? <Sun size={24} /> : <Moon size={24} />}
       </button>
 
-      {/* 2. MAIN CARD */}
+      {/* MAIN CARD */}
       <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl overflow-hidden flex w-full max-w-[1000px] min-h-[600px] transition-colors duration-300">
         
         {/* --- LEFT SIDE: DYNAMIC CAROUSEL --- */}
         <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1A237E] to-[#3949AB] dark:from-indigo-900 dark:to-slate-900 items-center justify-center relative p-12 text-white overflow-hidden transition-all duration-500">
           
-          {/* Animated Content */}
           <div className="relative z-10 w-full animate-fade-in-up">
-            {/* Elegant Font Applied Here */}
             <h1 className="text-5xl font-bold font-['Playfair_Display'] mb-6 leading-tight whitespace-pre-line transition-all duration-500 tracking-wide">
               {slides[currentSlide].title}
             </h1>
@@ -117,7 +113,6 @@ export default function Login() {
               {slides[currentSlide].text}
             </p>
             
-            {/* Carousel Dots */}
             <div className="mt-12 flex gap-3">
               {slides.map((_, index) => (
                 <button
@@ -133,7 +128,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Abstract circles decoration */}
           <div className="absolute top-[-50px] left-[-50px] w-40 h-40 rounded-full bg-white opacity-5 animate-pulse"></div>
           <div className="absolute bottom-[-20px] right-[-20px] w-60 h-60 rounded-full bg-white opacity-5"></div>
         </div>
@@ -141,13 +135,13 @@ export default function Login() {
         {/* --- RIGHT SIDE: FORM --- */}
         <div className="w-full md:w-1/2 bg-white dark:bg-slate-800 p-8 md:p-12 flex flex-col justify-center transition-colors duration-300">
           
+          {/* HEADER (Cleaned up!) */}
           <div className="text-center mb-10">
-            {/* Elegant Font Applied Here */}
             <h2 className="text-4xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white mb-2 tracking-tight">
-              OpenSocialM
+              Welcome Back
             </h2>
-            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
-              Welcome back
+            <p className="text-gray-400 text-sm font-medium tracking-wide">
+              Please enter your details to sign in.
             </p>
           </div>
 
@@ -181,18 +175,15 @@ export default function Login() {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
               </div>
-              
               <input
                 id="password"
                 name="password"
-                // CHANGE 1: Make type dynamic
-                type={showPassword ? "text" : "password"} 
+                type="password"
                 required
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                // CHANGE 2: Updated pr-4 to pr-12 to make room for the eye icon
-                className="w-full pl-11 pr-12 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
+                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
               />
               
               {/* CHANGE 3: Add the toggle button */}
@@ -210,7 +201,10 @@ export default function Login() {
             </div>
 
             <div className="text-left">
-              <Link to="/forgot-password" className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors uppercase tracking-wider">
+              <Link 
+                to="/forgot-password" 
+                className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-[#1A237E] dark:hover:text-blue-400 transition-colors uppercase tracking-wider"
+              >
                 Forgot Password?
               </Link>
             </div>
@@ -223,6 +217,7 @@ export default function Login() {
               {isLoading ? 'SIGNING IN...' : 'LOGIN'}
             </button>
           </form>
+
           <div className="mt-8 text-center text-xs text-gray-500">
             Don't have an account? <Link to="/register" className="font-bold text-[#1A237E] dark:text-blue-400 hover:underline tracking-wide">CREATE ACCOUNT</Link>
           </div>
