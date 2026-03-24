@@ -8,6 +8,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Register from './components/auth/Register';
+import ForgotPassword from './components/auth/ForgotPassword';
 import AboutUs from './pages/AboutUs';
 import Chat from './pages/Chat';
 import UserProfile from './pages/UserProfile';
@@ -28,6 +29,7 @@ function App() {
             <Route index element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/chat/:id" element={<Chat />} />
             <Route path="/profile/:id" element={<UserProfile />} />

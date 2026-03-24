@@ -47,6 +47,12 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  resetPasswordOtp: {
+    type: String
+  },
+  resetPasswordExpire: {
+    type: Date
+  },
   bio: { type: String, default: ''}, 
   avatar: { type: String, default: ''}, 
   coverImage: { type: String, default:'' } 

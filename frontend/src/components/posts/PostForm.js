@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/authContext';
-import axios from '../../utils/api';
+import axios from 'axios';
 
 const PostForm = ({ faculty, addPost }) => {
   const [text, setText] = useState('');
@@ -10,9 +10,9 @@ const PostForm = ({ faculty, addPost }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    
     try {
-      const res = await axios.post('/api/posts', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts`, {
         text,
         faculty
       });

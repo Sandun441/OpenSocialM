@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
-import axios from '../../utils/api';
+import axios from 'axios';
 
 const Post = ({ post, deletePost }) => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ const Post = ({ post, deletePost }) => {
 
   const handleLike = async () => {
     try {
-      const res = await axios.put(`/api/posts/like/${post._id}`);
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/posts/like/${post._id}`);
       setLikes(res.data);
     } catch (err) {
       console.error(err.response?.data?.msg || 'Error liking post');
@@ -24,7 +24,7 @@ const Post = ({ post, deletePost }) => {
     if (!commentText.trim()) return;
 
     try {
-      const res = await axios.post(`/api/posts/comment/${post._id}`, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts/comment/${post._id}`, {
         text: commentText
       });
       setComments(res.data);

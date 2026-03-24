@@ -13,7 +13,7 @@ const PostItem = ({ post, deletePost }) => {
   const handleLike = async () => {
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      const res = await axios.put(`/api/posts/like/${post._id}`, {}, config);
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/posts/like/${post._id}`, {}, config);
       setLikes(res.data);
     } catch (err) {
       console.error("Error liking post", err);
@@ -25,7 +25,7 @@ const PostItem = ({ post, deletePost }) => {
     if (!window.confirm("Are you sure?")) return;
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      await axios.delete(`/api/posts/${post._id}`, config);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/posts/${post._id}`, config);
       deletePost(post._id);
     } catch (err) {
       console.error("Error deleting", err);
@@ -37,7 +37,7 @@ const PostItem = ({ post, deletePost }) => {
     e.preventDefault();
     try {
       const config = { headers: { 'x-auth-token': localStorage.getItem('token') } };
-      const res = await axios.post(`/api/posts/comment/${post._id}`, { text: commentText }, config);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts/comment/${post._id}`, { text: commentText }, config);
       setComments(res.data);
       setCommentText('');
     } catch (err) {
@@ -57,7 +57,7 @@ const PostItem = ({ post, deletePost }) => {
           </div>
           <div>
             <h4 className="font-bold text-gray-800 dark:text-white">
-               {post.user ? `${post.user.firstName} ${post.user.lastName}` : 'Unknown'}
+               {post.user ? `${post.user.firstName} ${post.user.lastName}` : 'Author'}
             </h4>
             <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(post.date).toLocaleDateString()}</p>
           </div>

@@ -12,7 +12,7 @@ const postRoutes = require('./routes/posts');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({origin: '*'}));
 app.use(express.json());
 
 // 1. Improved MongoDB Connection Logic
