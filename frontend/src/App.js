@@ -16,7 +16,7 @@ import EventsCalendar from './pages/EventsCalendar';
 import Discussion from './pages/Discussion';
 import AcademicProgress from './pages/AcademicProgress';
 import ThemeProvider from './context/ThemeContext';
-import ForgotPassword from './components/auth/ForgotPassword';
+
 
 
 function App() {

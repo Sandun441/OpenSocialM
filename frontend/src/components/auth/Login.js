@@ -1,7 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
-import { User, Lock, Moon, Sun } from 'lucide-react'; 
+// Added Eye and EyeOff to the imports
+import { User, Lock, Moon, Sun, Eye, EyeOff } from 'lucide-react'; 
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ export default function Login() {
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // --- ADDED: PASSWORD VISIBILITY STATE ---
+  const [showPassword, setShowPassword] = useState(false);
   
   // --- CAROUSEL STATE ---
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -24,7 +28,6 @@ export default function Login() {
   const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // --- CAROUSEL CONTENT ---
   const slides = [
     {
       title: "Welcome \nBack!",
@@ -40,7 +43,6 @@ export default function Login() {
     }
   ];
 
-  // --- EFFECT: AUTO-SCROLL SLIDES ---
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -48,7 +50,6 @@ export default function Login() {
     return () => clearInterval(interval);
   }, [slides.length]);
 
-  // --- EFFECT: HANDLE DARK MODE ---
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -59,7 +60,6 @@ export default function Login() {
     }
   }, [darkMode]);
 
-  // --- EFFECT: SAFE LOGIN REDIRECT ---
   useEffect(() => {
     if (user) navigate('/dashboard', { replace: true });
   }, [user, navigate]);
@@ -91,7 +91,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 relative font-['Lato']">
       
-      {/* THEME TOGGLE BUTTON */}
       <button 
         onClick={() => setDarkMode(!darkMode)}
         className="absolute top-6 right-6 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg text-slate-600 dark:text-yellow-400 transition-all transform hover:scale-110 z-50"
@@ -99,12 +98,9 @@ export default function Login() {
         {darkMode ? <Sun size={24} /> : <Moon size={24} />}
       </button>
 
-      {/* MAIN CARD */}
       <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl overflow-hidden flex w-full max-w-[1000px] min-h-[600px] transition-colors duration-300">
         
-        {/* --- LEFT SIDE: DYNAMIC CAROUSEL --- */}
         <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1A237E] to-[#3949AB] dark:from-indigo-900 dark:to-slate-900 items-center justify-center relative p-12 text-white overflow-hidden transition-all duration-500">
-          
           <div className="relative z-10 w-full animate-fade-in-up">
             <h1 className="text-5xl font-bold font-['Playfair_Display'] mb-6 leading-tight whitespace-pre-line transition-all duration-500 tracking-wide">
               {slides[currentSlide].title}
@@ -127,15 +123,11 @@ export default function Login() {
               ))}
             </div>
           </div>
-
           <div className="absolute top-[-50px] left-[-50px] w-40 h-40 rounded-full bg-white opacity-5 animate-pulse"></div>
           <div className="absolute bottom-[-20px] right-[-20px] w-60 h-60 rounded-full bg-white opacity-5"></div>
         </div>
 
-        {/* --- RIGHT SIDE: FORM --- */}
         <div className="w-full md:w-1/2 bg-white dark:bg-slate-800 p-8 md:p-12 flex flex-col justify-center transition-colors duration-300">
-          
-          {/* HEADER (Cleaned up!) */}
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold font-['Playfair_Display'] text-[#1A237E] dark:text-white mb-2 tracking-tight">
               Welcome Back
@@ -152,8 +144,6 @@ export default function Login() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* EMAIL */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <User className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
@@ -170,7 +160,6 @@ export default function Login() {
               />
             </div>
 
-            {/* PASSWORD */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-[#1A237E] transition-colors" />
@@ -178,15 +167,15 @@ export default function Login() {
               <input
                 id="password"
                 name="password"
-                type="password"
+                // Logic updated: toggle between password and text
+                type={showPassword ? "text" : "password"}
                 required
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-11 pr-4 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
+                className="w-full pl-11 pr-12 py-4 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:border-transparent outline-none transition-all placeholder-gray-400 dark:placeholder-gray-500 font-medium tracking-wide"
               />
               
-              {/* CHANGE 3: Add the toggle button */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
