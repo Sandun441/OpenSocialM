@@ -26,6 +26,8 @@ const AcademicProgress = () => {
 
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const [saving, setSaving] = useState(false);
   
   // --- DELETE CONFIRMATION STATE ---
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, code: '' });
@@ -97,17 +99,28 @@ const AcademicProgress = () => {
   };
 
   const addCourseToBatch = (course) => {
-    const newEntry = {
-      id: Date.now(),
-      courseCode: course.code,
-      courseName: course.name,
-      grade: 'A',
-      semester: batchSemester
-    };
-    setPendingResults([...pendingResults, newEntry]);
-    setSearchInput('');
-    setShowSuggestions(false);
+
+  const alreadyExists =
+    pendingResults.some(r => r.courseCode === course.code) ||
+    data.courses.some(c => c.code === course.code);
+
+  if (alreadyExists) {
+    showToast(`Course ${course.code} already added!`, "error");
+    return;
+  }
+
+  const newEntry = {
+    id: Date.now(),
+    courseCode: course.code,
+    courseName: course.name,
+    grade: 'A',
+    semester: batchSemester
   };
+
+  setPendingResults([...pendingResults, newEntry]);
+  setSearchInput('');
+  setShowSuggestions(false);
+};
 
   const updateEntry = (id, field, value) => {
     setPendingResults(pendingResults.map(item => 
@@ -120,30 +133,36 @@ const AcademicProgress = () => {
   };
 
   const handleBatchSave = async (e) => {
-    e.preventDefault();
-    if (pendingResults.length === 0) return;
+  e.preventDefault();
+  if (pendingResults.length === 0) return;
 
-    try {
-      const token = localStorage.getItem('token');
-      const config = { headers: { 'x-auth-token': token } };
-      
-      const payload = {
-        results: pendingResults.map(r => ({
-          courseCode: r.courseCode,
-          grade: r.grade,
-          semester: r.semester
-        }))
-      };
-      
-      await axios.post(`${process.env.REACT_APP_API_URL}/academic/add-results-batch`, payload, config);
-      await fetchProgress(); 
-      setShowAddModal(false);
-      setPendingResults([]);
-      showToast(`Successfully saved ${pendingResults.length} results!`, "success");
-    } catch (err) {
-      showToast("Failed to save results.", "error");
-    }
-  };
+  try {
+    setSaving(true); // 🔥 start loading
+
+    const token = localStorage.getItem('token');
+    const config = { headers: { 'x-auth-token': token } };
+    
+    const payload = {
+      results: pendingResults.map(r => ({
+        courseCode: r.courseCode,
+        grade: r.grade,
+        semester: r.semester
+      }))
+    };
+    
+    await axios.post(`${process.env.REACT_APP_API_URL}/academic/add-results-batch`, payload, config);
+    await fetchProgress(); 
+
+    setShowAddModal(false);
+    setPendingResults([]);
+    showToast(`Successfully saved ${pendingResults.length} results!`, "success");
+
+  } catch (err) {
+    showToast("Failed to save results.", "error");
+  } finally {
+    setSaving(false); // 🔥 stop loading
+  }
+};
 
   const confirmDelete = async () => {
     try {
@@ -471,20 +490,33 @@ const AcademicProgress = () => {
               <div className="flex gap-3">
                 <button onClick={() => setShowAddModal(false)} className="px-6 py-2.5 text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl font-medium transition shadow-sm">Cancel</button>
                 <button 
-                  onClick={handleBatchSave}
-                  disabled={pendingResults.length === 0}
-                  className={`px-6 py-2.5 text-white rounded-xl font-medium transition shadow-lg shadow-blue-500/30 flex items-center gap-2 ${
-                    pendingResults.length === 0 ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  <CheckCircle size={18} />
-                  Save All
-                </button>
+  onClick={handleBatchSave}
+  disabled={pendingResults.length === 0 || saving}
+  className={`px-6 py-2.5 text-white rounded-xl font-medium transition shadow-lg flex items-center justify-center gap-2 ${
+    pendingResults.length === 0 || saving
+      ? 'bg-blue-300 cursor-not-allowed'
+      : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30'
+  }`}
+>
+  {saving ? (
+    <>
+      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      Saving...
+    </>
+  ) : (
+    <>
+      <CheckCircle size={18} />
+      Save All
+    </>
+  )}
+</button>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      
 
       {/* --- CONFIRM DELETE MODAL --- */}
       {deleteModal.show && (
