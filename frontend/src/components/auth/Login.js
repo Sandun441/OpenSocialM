@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 // Added Eye and EyeOff to the imports
-import { User, Lock, Moon, Sun, Eye, EyeOff } from 'lucide-react'; 
+import { User, Lock, Eye, EyeOff } from 'lucide-react'; 
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -19,12 +19,6 @@ export default function Login() {
   // --- CAROUSEL STATE ---
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // --- THEME STATE ---
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('theme') === 'dark' || 
-    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  );
-
   const { login, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -49,16 +43,6 @@ export default function Login() {
     }, 5000); 
     return () => clearInterval(interval);
   }, [slides.length]);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [darkMode]);
 
   useEffect(() => {
     if (user) navigate('/dashboard', { replace: true });
@@ -91,13 +75,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-[#8CABFF] dark:bg-slate-900 transition-colors duration-300 flex items-center justify-center p-4 relative font-['Lato']">
       
-      <button 
-        onClick={() => setDarkMode(!darkMode)}
-        className="absolute top-6 right-6 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg text-slate-600 dark:text-yellow-400 transition-all transform hover:scale-110 z-50"
-      >
-        {darkMode ? <Sun size={24} /> : <Moon size={24} />}
-      </button>
-
       <div className="bg-white dark:bg-slate-800 rounded-[30px] shadow-2xl overflow-hidden flex w-full max-w-[1000px] min-h-[600px] transition-colors duration-300">
         
         <div className="hidden md:flex w-1/2 bg-gradient-to-br from-[#1A237E] to-[#3949AB] dark:from-indigo-900 dark:to-slate-900 items-center justify-center relative p-12 text-white overflow-hidden transition-all duration-500">
