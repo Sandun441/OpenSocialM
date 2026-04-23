@@ -1,9 +1,12 @@
 import { useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { ThemeContext } from '../../context/ThemeContext'; // <-- Import ThemeContext
+import { Sun, Moon } from 'lucide-react'; // <-- Import Icons
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext); // <-- Consume ThemeContext
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,9 +25,10 @@ const Navbar = () => {
   return (
     <nav className="bg-[#1A237E] dark:bg-slate-900 shadow-lg transition-colors duration-300 font-['Lato'] z-50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex h-16 items-center ${isAuthPage ? 'justify-center' : 'justify-between'}`}>
+        {/* Changed to 'justify-between w-full' so the theme toggle always anchors to the right */}
+        <div className="flex h-16 items-center justify-between w-full">
           
-          {/* --- LEFT SIDE: LOGO --- */}
+          {/* --- LEFT SIDE: LOGO & LINKS --- */}
           <div className="flex items-center">
             {/* Logo Text - OpenSocialM */}
             <Link 
@@ -46,10 +50,21 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* --- RIGHT SIDE: LOGOUT ONLY (Hidden if not logged in) --- */}
-          {!isAuthPage && isAuthenticated && (
-            <div className="flex items-center">
-              <div className="flex items-center space-x-5">
+          {/* --- RIGHT SIDE: THEME TOGGLE & LOGOUT --- */}
+          <div className="flex items-center space-x-4 md:space-x-6">
+            
+            {/* THEME TOGGLE BUTTON */}
+            <button 
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-indigo-100 dark:text-yellow-400 transition-all focus:outline-none transform hover:scale-110"
+              aria-label="Toggle Dark Mode"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            {/* USER INFO & LOGOUT (Hidden on auth pages) */}
+            {!isAuthPage && isAuthenticated && (
+              <div className="flex items-center space-x-5 border-l border-indigo-400/30 pl-4 md:pl-6">
                 <span className="text-indigo-100 text-sm hidden md:block tracking-wide">
                   Hello, <span className="font-bold text-white">{user?.firstName}</span>
                 </span>
@@ -60,8 +75,9 @@ const Navbar = () => {
                   LOGOUT
                 </button>
               </div>
-            </div>
-          )}
+            )}
+
+          </div>
 
         </div>
       </div>
