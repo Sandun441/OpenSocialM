@@ -89,7 +89,6 @@ const AcademicProgress = () => {
     setSearchInput(input);
     if (input.length > 0) {
       const matches = courseCatalog.filter(course => 
-        course.semester === Number(batchSemester) && 
         (course.code.includes(input) || course.name.toUpperCase().includes(input)) &&
         !pendingResults.some(r => r.courseCode === course.code)
       );
