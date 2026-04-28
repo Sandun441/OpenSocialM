@@ -6,8 +6,8 @@ const Course = require('./models/Course');
 
 const courses = [
   // --- LEVEL 3 ---
-  { code: 'EEI3372', name: 'Programming in Python',                       credits: 3, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
-  { code: 'EEI3366', name: 'Database Systems',                             credits: 3, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
+  { code: 'EEI3372', name: 'Programming in Python', credits: 3, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
+  { code: 'EEI3366', name: 'Database Systems', credits: 3, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
   { code: 'EEI3346', name: 'Web Application Development',                  credits: 3, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
   { code: 'EEI3467', name: 'Software Engineering Concepts and Programming', credits: 4, category: 'I', level: 3, isCompulsory: true,  semester: 1 },
   { code: 'EEL3263', name: 'Communication Skills',                          credits: 2, category: 'L', level: 3, isCompulsory: true,  semester: 1 }, // spans 1&2, listed as 1
