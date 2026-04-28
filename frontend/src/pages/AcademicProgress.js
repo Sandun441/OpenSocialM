@@ -28,6 +28,7 @@ const AcademicProgress = () => {
   const [showAddModal, setShowAddModal] = useState(false);
 
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   
   // --- DELETE CONFIRMATION STATE ---
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, code: '' });
@@ -164,21 +165,28 @@ const AcademicProgress = () => {
   }
 };
 
-  const confirmDelete = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const config = { headers: { 'x-auth-token': token } };
+const confirmDelete = async () => {
+  try {
+    setDeleting(true); // 🔥 start
+
+    const token = localStorage.getItem('token');
+    const config = { headers: { 'x-auth-token': token } };
+    
+    await axios.delete(
+      `${process.env.REACT_APP_API_URL}/academic/result/${deleteModal.id}`, 
+      config
+    );
+    
+    await fetchProgress();
+    setDeleteModal({ show: false, id: null, code: '' }); 
+    showToast("Course result deleted.", "success");
       
-      await axios.delete(`${process.env.REACT_APP_API_URL}/academic/result/${deleteModal.id}`, config);
-      
-      await fetchProgress(); 
-      setDeleteModal({ show: false, id: null, code: '' }); 
-      showToast("Course result deleted.", "success");
-      
-    } catch (err) {
-      showToast("Failed to delete result.", "error");
-    }
-  };
+  } catch (err) {
+    showToast("Failed to delete result.", "error");
+  } finally {
+    setDeleting(false); // 🔥 stop
+  }
+};
 
   // --- STYLES ---
   const getDegreeClassColor = (degreeClass) => {
@@ -538,11 +546,23 @@ const AcademicProgress = () => {
                  Cancel
                </button>
                <button 
-                 onClick={confirmDelete}
-                 className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition shadow-lg shadow-red-500/30"
-               >
-                 Yes, Delete
-               </button>
+  onClick={confirmDelete}
+  disabled={deleting}
+  className={`flex-1 py-2.5 rounded-xl font-medium transition shadow-lg flex items-center justify-center gap-2 ${
+    deleting
+      ? 'bg-red-300 cursor-not-allowed'
+      : 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/30'
+  }`}
+>
+  {deleting ? (
+    <>
+      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      Deleting...
+    </>
+  ) : (
+    'Yes, Delete'
+  )}
+</button>
              </div>
           </div>
         </div>
