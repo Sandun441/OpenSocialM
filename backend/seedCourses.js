@@ -73,17 +73,17 @@ const seedCourses = async () => {
 
     for (const course of courses) {
       await Course.updateOne(
-        { code: course.code },   // find by course code
-        { $set: course },        // update data
-        { upsert: true }         // insert if not exists
-      );
-    }
+      { code: course.code },
+      { $set: course },
+      { upsert: true }
+    );
+        }
 
-    console.log("✅ Courses synced successfully!");
-  } catch (err) {
-    console.error("❌ Seeding error:", err);
-  }
-}
+        console.log("✅ Courses synced successfully!");
+      } catch (err) {
+        console.error("❌ Seeding error:", err);
+      }
+    }
 
 const seedDB = async () => {
   try {
