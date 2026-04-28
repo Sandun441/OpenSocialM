@@ -6,6 +6,7 @@ const CourseSchema = new mongoose.Schema({
   credits: { type: Number, required: true },
   category: { type: String, required: true },
   level: { type: Number, required: true },
+  semester: { type: Number },
   isCompulsory: { type: Boolean, default: false } 
 });
 
