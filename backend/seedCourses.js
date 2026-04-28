@@ -67,6 +67,24 @@ const courses = [
   { code: 'EEI6369', name: 'Cloud Computing', credits: 3, category: 'I', level: 6, isCompulsory: false },
 ];
 
+const seedCourses = async () => {
+  try {
+    console.log("🌱 Seeding courses...");
+
+    for (const course of courses) {
+      await Course.updateOne(
+        { code: course.code },   // find by course code
+        { $set: course },        // update data
+        { upsert: true }         // insert if not exists
+      );
+    }
+
+    console.log("✅ Courses synced successfully!");
+  } catch (err) {
+    console.error("❌ Seeding error:", err);
+  }
+}
+
 const seedDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
