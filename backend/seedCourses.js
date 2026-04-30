@@ -17,7 +17,7 @@ const courses = [
   { code: 'EEI3273/EEX3373', name: 'Communication and Computer Technology',         credits: 2, category: 'I', level: 3, isCompulsory: true,  semester: 2 },
   { code: 'MHZ3356/MHZ4256', name: 'Mathematics for Computing I',                   credits: 3, category: 'Z', level: 3, isCompulsory: true,  semester: 2 },
   { code: 'EEM3366', name: 'Introduction to Business Studies',              credits: 3, category: 'M', level: 3, isCompulsory: false, semester: 2 },
-
+  { code: 'LTE34SI', name: ' English for Academic Purpose -Intermediate',              credits: 4, category: 'L', level: 3, isCompulsory: true, semester: 1 },
   // --- LEVEL 4 ---
   { code: 'EEI4267', name: 'Requirement Engineering',                        credits: 2, category: 'I', level: 4, isCompulsory: true,  semester: 3 },
   { code: 'MHZ4359/MHZ3459', name: 'Mathematics for Computing II',                   credits: 3, category: 'Z', level: 4, isCompulsory: true,  semester: 3 },
@@ -42,7 +42,7 @@ const courses = [
   { code: 'EEI5369/EEI4369', name: 'Mobile App Development with Android',            credits: 3, category: 'I', level: 5, isCompulsory: false, semester: 5 },
   { code: 'EEI5263', name: 'Computer Organization and Architecture',         credits: 2, category: 'I', level: 5, isCompulsory: true,  semester: 6 },
   { code: 'EEI5467', name: 'Software Testing and Quality Assurance',         credits: 4, category: 'I', level: 5, isCompulsory: true,  semester: 6 },
-  { code: 'EEI5486/EEI4366', name: 'Advanced Database Systems',                      credits: 5, category: 'I', level: 5, isCompulsory: true,  semester: 6 },
+  { code: 'EEI5486/EEI4366', name: 'Advanced Database Systems',                      credits: 4, category: 'I', level: 5, isCompulsory: true,  semester: 6 },
   { code: 'EEI5376', name: 'Embedded Systems and IoT',                       credits: 3, category: 'I', level: 5, isCompulsory: false, semester: 6 },
   { code: 'MHJ5282/MHJ4271', name: 'History of Technology',                          credits: 2, category: 'J', level: 5, isCompulsory: false, semester: 6 },
   { code: 'EEI5373/EEX4373', name: 'Data Science',                                   credits: 3, category: 'I', level: 5, isCompulsory: false, semester: 6 },
