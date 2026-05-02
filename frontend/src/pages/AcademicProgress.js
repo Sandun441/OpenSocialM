@@ -53,7 +53,6 @@ const AcademicProgress = () => {
     }, 3000);
   };
 
-  // --- FETCH DATA ---
   const fetchProgress = async () => {
     try {
       const token = localStorage.getItem('token');
