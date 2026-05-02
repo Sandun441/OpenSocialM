@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth'); // Ensure this is properly imported
-const sendEmail = require('../utils/sendEmail');
+const { sendEmail, buildOtpEmailHtml } = require('../utils/sendEmail');
 
 // @route   POST api/auth/register
 // @desc    Register user
@@ -140,13 +140,15 @@ router.post('/forgotpassword', async (req, res) => {
     await user.save();
 
     // Send email
-    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please use the following OTP to reset your password:\n\n${otp}\n\nIf you did not request this, please ignore this email.`;
+    const message = `Your OTP to reset your password is: ${otp}\n\nThis OTP expires in 10 minutes. If you did not request this, please ignore this email.`;
+    const html = buildOtpEmailHtml(otp);
 
     try {
       await sendEmail({
         email: user.email,
-        subject: 'Password Reset OTP',
-        message
+        subject: 'Password Reset OTP – OpenSocialM',
+        message,
+        html
       });
 
       res.status(200).json({ success: true, msg: 'Email sent' });
