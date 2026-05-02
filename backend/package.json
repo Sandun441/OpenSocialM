@@ -21,7 +21,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.17.0",
     "mongoose": "^8.20.3",
-    "nodemailer": "^8.0.2",
+    "nodemailer": "^8.0.7",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "resend": "^6.12.2",

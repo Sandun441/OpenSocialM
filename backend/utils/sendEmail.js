@@ -1,24 +1,24 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,     // your Gmail address
+    pass: process.env.EMAIL_PASS      // Gmail App Password (NOT your real password)
+  }
+});
 
 const sendEmail = async (options) => {
-  const fromAddress = `${process.env.FROM_NAME || 'OpenSocialM'} <${process.env.FROM_EMAIL || 'onboarding@resend.dev'}>`;
-
-  const { data, error } = await resend.emails.send({
-    from: fromAddress,
+  const mailOptions = {
+    from: `OpenSocialM <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
-    html: options.html || buildPlainHtml(options.message),
     text: options.message,
-  });
+    html: options.html || options.message
+  };
 
-  if (error) {
-    console.error('Resend error:', error);
-    throw new Error(error.message);
-  }
-
-  console.log('Email sent via Resend, id:', data.id);
+  const info = await transporter.sendMail(mailOptions);
+  console.log('Email sent:', info.messageId);
 };
 
 /**
